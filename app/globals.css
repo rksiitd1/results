@@ -1,0 +1,421 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 215 25% 27%;
+    --card: 0 0% 98%;
+    --card-foreground: 215 25% 27%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+    --primary: 188 78% 41%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 142 69% 58%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 98%;
+    --muted-foreground: 215 25% 27%;
+    --accent: 142 69% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 13% 91%;
+    --input: 0 0% 100%;
+    --ring: 188 78% 41%;
+    --radius: 0.75rem;
+    --chart-1: 160 60% 45%;
+    --chart-2: 142 69% 58%;
+    --chart-3: 188 78% 41%;
+    --chart-4: 215 25% 27%;
+    --chart-5: 0 84.2% 60.2%;
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 215 25% 27%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 215 25% 27%;
+    --sidebar-accent: 142 69% 58%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 188 78% 41%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --radius: 0.75rem;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Print styles */
+@media print {
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    margin: 0;
+    padding: 0;
+  }
+
+  @page {
+    margin: 0.25in;
+    size: A4;
+  }
+
+  /* Force desktop layout for all responsive classes during print */
+  /* Override all mobile-first responsive classes to show desktop layout */
+  .sm\\:flex-row,
+  .md\\:flex-row,
+  .lg\\:flex-row {
+    flex-direction: row !important;
+  }
+
+  .sm\\:items-center,
+  .md\\:items-center,
+  .lg\\:items-center {
+    align-items: center !important;
+  }
+
+  .sm\\:justify-between,
+  .md\\:justify-between,
+  .lg\\:justify-between {
+    justify-content: space-between !important;
+  }
+
+  .sm\\:text-lg,
+  .md\\:text-lg,
+  .lg\\:text-lg {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  .sm\\:text-xl,
+  .md\\:text-xl,
+  .lg\\:text-xl {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  .sm\\:text-2xl,
+  .md\\:text-2xl,
+  .lg\\:text-2xl {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+
+  .sm\\:gap-2,
+  .md\\:gap-2,
+  .lg\\:gap-2 {
+    gap: 0.5rem !important;
+  }
+
+  .sm\\:gap-4,
+  .md\\:gap-4,
+  .lg\\:gap-4 {
+    gap: 1rem !important;
+  }
+
+  .sm\\:p-4,
+  .md\\:p-4,
+  .lg\\:p-4 {
+    padding: 1rem !important;
+  }
+
+  .sm\\:mx-2,
+  .md\\:mx-2,
+  .lg\\:mx-2 {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+  }
+
+  .sm\\:mr-2,
+  .md\\:mr-2,
+  .lg\\:mr-2 {
+    margin-right: 0.5rem !important;
+  }
+
+  .sm\\:mb-1,
+  .md\\:mb-1,
+  .lg\\:mb-1 {
+    margin-bottom: 0.25rem !important;
+  }
+
+  .sm\\:mb-2,
+  .md\\:mb-2,
+  .lg\\:mb-2 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Force all flex-none and flex-1 classes to show desktop behavior */
+  .sm\\:flex-none,
+  .md\\:flex-none,
+  .lg\\:flex-none {
+    flex: none !important;
+  }
+
+  .sm\\:flex-1,
+  .md\\:flex-1,
+  .lg\\:flex-1 {
+    flex: 1 1 0% !important;
+  }
+
+  /* Force grid layouts to show desktop columns */
+  .sm\\:grid-cols-2,
+  .md\\:grid-cols-2,
+  .lg\\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .sm\\:grid-cols-3,
+  .md\\:grid-cols-3,
+  .lg\\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  /* Force inline display for elements that should show inline on desktop */
+  .sm\\:inline,
+  .md\\:inline,
+  .lg\\:inline {
+    display: inline !important;
+  }
+
+  /* Force block display for elements that should show as block on desktop */
+  .sm\\:block,
+  .md\\:block,
+  .lg\\:block {
+    display: block !important;
+  }
+
+  /* Override any hidden classes on larger screens to ensure desktop layout */
+  .sm\\:hidden,
+  .md\\:hidden,
+  .lg\\:hidden {
+    display: none !important;
+  }
+
+  /* Force width classes to desktop values */
+  .sm\\:w-4,
+  .md\\:w-4,
+  .lg\\:w-4 {
+    width: 1rem !important;
+  }
+
+  .sm\\:h-4,
+  .md\\:h-4,
+  .lg\\:h-4 {
+    height: 1rem !important;
+  }
+
+  /* Ensure the report card fits on one page */
+  .max-w-4xl {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0.25in !important;
+  }
+
+  /* Optimize table printing */
+  table {
+    page-break-inside: avoid;
+    border-collapse: collapse;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  /* Ensure no page breaks in critical sections */
+  .mb-4,
+  .mb-6 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Optimize font sizes for print */
+  h1,
+  h2,
+  h3,
+  h4 {
+    page-break-after: avoid;
+  }
+
+  /* Ensure logos and decorative elements print properly */
+  .bg-orange-100,
+  .bg-yellow-50,
+  .bg-blue-50,
+  .bg-gray-100 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Force all button groups and action bars to show desktop layout */
+  .flex.flex-col.sm\\:flex-row,
+  .flex.flex-col.md\\:flex-row,
+  .flex.flex-col.lg\\:flex-row {
+    flex-direction: row !important;
+  }
+
+  /* Force all responsive text sizes to desktop equivalents */
+  .text-xs.sm\\:text-sm,
+  .text-xs.md\\:text-sm,
+  .text-xs.lg\\:text-sm {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  .text-sm.sm\\:text-base,
+  .text-sm.md\\:text-base,
+  .text-sm.lg\\:text-base {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  /* Force all responsive spacing to desktop values */
+  .gap-1.sm\\:gap-2,
+  .gap-1.md\\:gap-2,
+  .gap-1.lg\\:gap-2 {
+    gap: 0.5rem !important;
+  }
+
+  .gap-2.sm\\:gap-4,
+  .gap-2.md\\:gap-4,
+  .gap-2.lg\\:gap-4 {
+    gap: 1rem !important;
+  }
+}
+
+/* Custom animations for enhanced home page */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 153, 51, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 153, 51, 0.6);
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Gradient text utilities */
+.gradient-text-orange {
+  background: linear-gradient(135deg, #ff9933, #ff6b35);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-green {
+  background: linear-gradient(135deg, #138808, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(135deg, #00008b, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass morphism effect */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Premium shadow effects */
+.shadow-premium {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-premium-lg {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+}
