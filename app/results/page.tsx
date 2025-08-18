@@ -1,58 +1,192 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowRight, Calendar, BookOpen, Award, Home, Search, BarChart3, Award as Trophy } from "lucide-react"
+import { ArrowRight, Home, Search, BarChart3, Award as Trophy, ChevronRight, Info, X } from "lucide-react"
 import { academicYears, getAvailableExamPeriods } from "@/lib/data"
 
+// Apple-inspired color palette
 const colors = {
-  primary: "#1a365d",
-  secondary: "#2c5282",
-  accent: "#3182ce",
-  success: "#38a169",
-  warning: "#dd6b20",
-  light: "#f7fafc",
-  dark: "#2d3748"
+  systemBackground: "#ffffff",
+  secondarySystemBackground: "#f2f2f7",
+  systemGray6: "#f2f2f7",
+  systemGray5: "#e5e5ea",
+  systemGray4: "#d1d1d6",
+  systemGray3: "#c7c7cc",
+  systemGray2: "#aeaeb2",
+  systemGray: "#8e8e93",
+  label: "#000000",
+  secondaryLabel: "#3c3c4399",
+  tertiaryLabel: "#3c3c434c",
+  quaternaryLabel: "#3c3c432d",
+  systemBlue: "#007aff",
+  systemGreen: "#34c759",
+  systemIndigo: "#5856d6",
+  systemTeal: "#5ac8fa",
+  systemPink: "#ff2d55",
+  systemRed: "#ff3b30",
+  systemOrange: "#ff9500",
+  systemYellow: "#ffcc00"
 }
 
+// Animation variants
 const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  hidden: { opacity: 0, y: 10 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      type: "spring",
+      damping: 25,
+      stiffness: 300
+    } 
+  },
+  exit: { opacity: 0, y: -10 }
 }
 
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05
+    }
+  }
+}
+
+// Typography
+const largeTitle = "text-3xl font-semibold tracking-tight"
+const title1 = "text-2xl font-semibold tracking-tight"
+const title2 = "text-xl font-semibold tracking-tight"
+const title3 = "text-lg font-semibold tracking-tight"
+const headline = "text-base font-medium tracking-tight text-blue-500"
+const body = "text-base font-normal leading-6"
+const callout = "text-base font-normal leading-6 text-gray-600"
+const subheadline = "text-sm font-normal text-gray-500"
+const footnote = "text-xs font-normal text-gray-500"
+
+// Exam types with updated styling
 const examTypes = [
   {
     id: "jigyasa-anveshan",
     name: "Jigyāsa Anveshan",
     description: "Monthly assessments I through X (April to January)",
-    icon: <Search className="w-8 h-8 text-white" />,
-    color: "from-blue-600 to-blue-400"
+    icon: <Search className="w-5 h-5 text-white" />,
+    color: colors.systemBlue,
+    bgColor: "bg-blue-500"
   },
   {
     id: "bodha-manthan",
     name: "Bodha Manthan",
     description: "Mid-term (September) and Final (March) examinations",
-    icon: <BarChart3 className="w-8 h-8 text-white" />,
-    color: "from-green-600 to-green-400"
+    icon: <BarChart3 className="w-5 h-5 text-white" />,
+    color: colors.systemGreen,
+    bgColor: "bg-green-500"
   },
   {
     id: "pragya-siddhi",
     name: "Pragya Siddhi",
     description: "Annual comprehensive assessment (March)",
-    icon: <Trophy className="w-8 h-8 text-white" />,
-    color: "from-purple-600 to-purple-400"
+    icon: <Trophy className="w-5 h-5 text-white" />,
+    color: colors.systemOrange,
+    bgColor: "bg-orange-500"
   }
 ]
+
+// Custom Select Component for iOS-like experience
+const IOSSelect = ({ 
+  value, 
+  onValueChange, 
+  items, 
+  placeholder, 
+  disabled = false 
+}: {
+  value: string
+  onValueChange: (value: string) => void
+  items: { value: string; label: string }[]
+  placeholder: string
+  disabled?: boolean
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedLabel, setSelectedLabel] = useState("")
+
+  useEffect(() => {
+    const selected = items.find(item => item.value === value)
+    setSelectedLabel(selected?.label || "")
+  }, [value, items])
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => !disabled && setIsOpen(true)}
+        className={`w-full text-left py-3 px-4 rounded-xl bg-white border ${disabled ? 'opacity-60' : 'active:bg-gray-100'} transition-colors flex items-center justify-between`}
+        disabled={disabled}
+      >
+        <span className={`${value ? 'text-gray-900' : 'text-gray-400'}`}>
+          {selectedLabel || placeholder}
+        </span>
+        <ChevronRight className="w-4 h-4 text-gray-400" />
+      </button>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            className="fixed inset-0 bg-black/50 z-50 flex items-end"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+          >
+            <motion.div 
+              className="w-full bg-white rounded-t-3xl p-5 max-h-[70vh] overflow-y-auto"
+              initial={{ y: 300, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 300, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-medium text-gray-900">{placeholder}</h3>
+                <button onClick={() => setIsOpen(false)} className="p-2 -mr-2">
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {items.map((item) => (
+                  <button
+                    key={item.value}
+                    onClick={() => {
+                      onValueChange(item.value)
+                      setIsOpen(false)
+                    }}
+                    className={`w-full text-left py-3 px-4 rounded-lg transition-colors ${
+                      value === item.value 
+                        ? 'bg-blue-500 text-white' 
+                        : 'active:bg-gray-100'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 export default function ResultsPage() {
   const [academicYear, setAcademicYear] = useState("")
   const [examType, setExamType] = useState("")
   const [examSubType, setExamSubType] = useState("")
   const [activeTab, setActiveTab] = useState("")
+  const [showHelp, setShowHelp] = useState(false)
 
   const canProceed = academicYear && examType && (examType === "pragya-siddhi" || examSubType)
 
@@ -129,215 +263,241 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex-shrink-0 flex items-center">
-                <Home className="h-6 w-6 text-blue-600" />
-                <span className="ml-2 text-xl font-semibold text-gray-900">Gurukulam</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-blue-700/70"></div>
-          <div className="absolute inset-0 bg-[url('/pattern.svg')] bg-[length:100px_100px] opacity-10"></div>
-        </div>
-        <div className="relative max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
-          <motion.h1 
-            className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4"
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-          >
-            Examination Results Portal
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-blue-100 max-w-3xl mx-auto"
-            initial="hidden"
-            animate="visible"
-            variants={{ ...fadeIn, transition: { delay: 0.2 } }}
-          >
-            Access your academic progress and examination results with ease. Select the examination details below to get started.
-          </motion.p>
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Status Bar */}
+      <div className="h-12 bg-white border-b border-gray-100 flex items-center justify-between px-4">
+        <span className="font-medium">Gurukulam</span>
+        <Link href="/" className="p-2 -mr-2">
+          <Home className="w-5 h-5 text-blue-500" />
+        </Link>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Main Content */}
+      <div className="px-4 py-6">
         <motion.div 
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+          className="mb-8"
           initial="hidden"
           animate="visible"
-          variants={{
-            visible: {
-              transition: {
-                staggerChildren: 0.1
-              }
-            }
-          }}
+          variants={fadeIn}
         >
-          {/* Left Column - Exam Type Selection */}
-          <motion.div 
-            className="space-y-6"
-            variants={fadeIn}
-          >
-            <h2 className="text-2xl font-bold text-gray-800">Select Exam Type</h2>
-            <div className="space-y-4">
-              {examTypes.map((type) => (
-                <motion.div
-                  key={type.id}
-                  className={`p-6 rounded-xl cursor-pointer transition-all duration-300 ${
-                    activeTab === type.id 
-                      ? 'ring-2 ring-offset-2 ring-blue-500 bg-white shadow-lg' 
-                      : 'bg-white hover:shadow-md'
-                  }`}
-                  whileHover={{ y: -2 }}
-                  onClick={() => handleExamTypeSelect(type.id)}
-                >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-gradient-to-r ${type.color}`}>
-                    {type.icon}
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">{type.name}</h3>
-                  <p className="text-gray-600">{type.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Middle Column - Form */}
-          <motion.div 
-            className="lg:col-span-2"
-            variants={fadeIn}
-          >
-            <Card className="shadow-xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
-                <CardTitle className="text-2xl font-bold">Examination Details</CardTitle>
-                <p className="text-blue-100 opacity-90">
-                  {!examType 
-                    ? "Select an exam type to continue" 
-                    : `Selected: ${examTypes.find(t => t.id === examType)?.name}`}
-                </p>
-              </CardHeader>
-              <CardContent className="p-6 space-y-6">
-                {/* Academic Year Selection */}
-                <div className="space-y-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Academic Year <span className="text-red-500">*</span>
-                  </label>
-                  <Select value={academicYear} onValueChange={setAcademicYear}>
-                    <SelectTrigger className="h-12 text-base">
-                      <SelectValue placeholder="Select Academic Year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {academicYears.map((year) => (
-                        <SelectItem key={year} value={year} className="text-base">
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Sub-type Selection */}
-                {examType === "jigyasa-anveshan" && (
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Monthly Examination <span className="text-red-500">*</span>
-                    </label>
-                    <Select value={examSubType} onValueChange={setExamSubType}>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Select Month" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getAvailableSubTypes().map((subType) => (
-                          <SelectItem key={subType?.value} value={subType?.value || ""} className="text-base">
-                            {subType?.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {examType === "bodha-manthan" && (
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Term Selection <span className="text-red-500">*</span>
-                    </label>
-                    <Select value={examSubType} onValueChange={setExamSubType}>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Select Term" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getAvailableSubTypes().map((subType) => (
-                          <SelectItem key={subType?.value} value={subType?.value || ""} className="text-base">
-                            {subType?.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {examType === "pragya-siddhi" && (
-                  <div className="p-4 rounded-lg bg-blue-50 border border-blue-100">
-                    <p className="text-blue-800">
-                      <span className="font-semibold">Pragya Siddhi</span> is the annual examination conducted in March. 
-                      No additional selection is required.
-                    </p>
-                  </div>
-                )}
-
-                {/* Proceed Button */}
-                <div className="pt-4">
-                  {canProceed ? (
-                    <Link href={getNextUrl()} className="block">
-                      <Button
-                        className="w-full h-14 text-lg font-medium bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-                      >
-                        View Results
-                        <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button 
-                      disabled 
-                      className="w-full h-14 text-lg font-medium bg-gray-200 text-gray-500 cursor-not-allowed"
-                    >
-                      {!examType ? "Select an exam type" : !academicYear ? "Select academic year" : "Select examination period"}
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Info */}
-            <div className="mt-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Need Help?</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>Select the type of examination from the left panel</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>Choose the academic year and examination period</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-500 mr-2">•</span>
-                  <span>Click "View Results" to see your performance</span>
-                </li>
-              </ul>
-            </div>
-          </motion.div>
+          <h1 className={`${title1} text-gray-900 mb-2`}>Results</h1>
+          <p className={`${callout} text-gray-600`}>Check your examination results by selecting the details below</p>
         </motion.div>
+
+        {/* Exam Type Selection */}
+        <motion.div 
+          className="mb-8"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <h2 className={`${title3} text-gray-900 mb-4`}>Select Exam Type</h2>
+          <div className="space-y-3">
+            {examTypes.map((type) => (
+              <motion.button
+                key={type.id}
+                variants={fadeIn}
+                className={`w-full p-4 rounded-xl text-left flex items-center transition-all ${
+                  activeTab === type.id 
+                    ? 'ring-2 ring-blue-500 bg-white shadow-sm' 
+                    : 'bg-white active:bg-gray-50'
+                }`}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleExamTypeSelect(type.id)}
+              >
+                <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center mr-4 ${type.bgColor}`}>
+                  {type.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className={`${title3} text-gray-900 truncate`}>{type.name}</h3>
+                  <p className={`${subheadline} text-gray-500 truncate`}>{type.description}</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-400" />
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Form Section */}
+        {examType && (
+          <motion.div 
+            className="bg-white rounded-2xl p-6 mb-6 shadow-sm"
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className={`${title3} text-gray-900`}>Examination Details</h2>
+                <p className={`${subheadline} text-gray-500`}>
+                  {examTypes.find(t => t.id === examType)?.name}
+                </p>
+              </div>
+              <button 
+                onClick={() => setShowHelp(true)}
+                className="p-2 -mr-2"
+              >
+                <Info className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="space-y-5">
+              {/* Academic Year Selection */}
+              <div>
+                <label className={`${subheadline} block text-gray-500 mb-1.5`}>
+                  Academic Year
+                </label>
+                <IOSSelect
+                  value={academicYear}
+                  onValueChange={setAcademicYear}
+                  items={academicYears.map(year => ({
+                    value: year,
+                    label: year
+                  }))}
+                  placeholder="Select academic year"
+                />
+              </div>
+
+              {/* Sub-type Selection */}
+              {examType === "jigyasa-anveshan" && (
+                <div>
+                  <label className={`${subheadline} block text-gray-500 mb-1.5`}>
+                    Monthly Examination
+                  </label>
+                  <IOSSelect
+                    value={examSubType}
+                    onValueChange={setExamSubType}
+                    items={getAvailableSubTypes().map(subType => ({
+                      value: subType?.value || "",
+                      label: subType?.label || ""
+                    }))}
+                    placeholder="Select month"
+                    disabled={!academicYear}
+                  />
+                </div>
+              )}
+
+              {examType === "bodha-manthan" && (
+                <div>
+                  <label className={`${subheadline} block text-gray-500 mb-1.5`}>
+                    Term Selection
+                  </label>
+                  <IOSSelect
+                    value={examSubType}
+                    onValueChange={setExamSubType}
+                    items={getAvailableSubTypes().map(subType => ({
+                      value: subType?.value || "",
+                      label: subType?.label || ""
+                    }))}
+                    placeholder="Select term"
+                    disabled={!academicYear}
+                  />
+                </div>
+              )}
+
+              {examType === "pragya-siddhi" && (
+                <div className="p-4 rounded-xl bg-blue-50">
+                  <p className={`${callout} text-blue-800`}>
+                    <span className="font-medium">Pragya Siddhi</span> is the annual examination conducted in March. 
+                    No additional selection is required.
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Action Button */}
+        <motion.div 
+          className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-lg"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+        >
+          <Link 
+            href={canProceed ? getNextUrl() : '#'}
+            className={`block w-full rounded-xl py-4 text-center font-medium ${
+              canProceed 
+                ? 'bg-blue-500 text-white active:bg-blue-600' 
+                : 'bg-gray-200 text-gray-500'
+            } transition-colors`}
+          >
+            {canProceed ? 'View Results' : 'Select exam details to continue'}
+          </Link>
+        </motion.div>
+
+        {/* Help Sheet */}
+        <AnimatePresence>
+          {showHelp && (
+            <motion.div 
+              className="fixed inset-0 bg-black/50 z-50 flex items-end"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowHelp(false)}
+            >
+              <motion.div 
+                className="w-full bg-white rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto"
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className={`${title2} text-gray-900`}>Need Help?</h3>
+                  <button 
+                    onClick={() => setShowHelp(false)}
+                    className="p-2 -mr-2"
+                  >
+                    <X className="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-blue-600 font-medium">1</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-1">Select Exam Type</h4>
+                      <p className="text-gray-600">Choose between Jigyāsa Anveshan, Bodha Manthan, or Pragya Siddhi</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-blue-600 font-medium">2</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-1">Choose Academic Year</h4>
+                      <p className="text-gray-600">Select the relevant academic year for the examination</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                      <span className="text-blue-600 font-medium">3</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-1">Select Examination Period</h4>
+                      <p className="text-gray-600">Choose the specific month or term for the selected exam type</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <button 
+                      onClick={() => setShowHelp(false)}
+                      className="w-full py-3 px-4 bg-blue-500 text-white rounded-xl font-medium active:bg-blue-600 transition-colors"
+                    >
+                      Got it, thanks!
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
