@@ -7,9 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Search, AlertCircle, Users, BookOpen, Shield } from "lucide-react"
-import { classes, findStudent, getClassStats } from "@/lib/data"
+import { ArrowLeft, Search, AlertCircle, Users, BookOpen, Shield, ChevronRight, X as XIcon } from "lucide-react"
+import { classes as classesFromLib, findStudent, getClassStats } from "@/lib/data"
 
+// Design tokens reused from main results page
+const largeTitle = "text-3xl font-semibold tracking-tight"
+const callout = "text-base font-normal leading-6 text-gray-600"
+
+// Small design palette (kept for reference)
 const colors = {
   saffron: "#FF9933",
   darkgreen: "#138808",
@@ -104,18 +109,18 @@ export default function StudentSearchPage({ params }: PageProps) {
 
   const handleSearch = () => {
     if (!selectedClass || !rollNumber || !studentName.trim()) return
-    
+
     // Show loading state
     setIsVerifying(true)
-    
+
     // Use requestAnimationFrame to ensure UI updates before heavy computation
     requestAnimationFrame(() => {
       // Normalize roll number before search
       const normalizedRoll = normalizeRollNumber(rollNumber)
-      
+
       // Find student with class and roll number match first
       const student = findStudent(selectedClass, normalizedRoll)
-      
+
       // Then verify name matches (case-insensitive and partial match)
       if (student && !isNameMatch(studentName, student.name)) {
         // If name doesn't match, treat as not found
@@ -123,13 +128,13 @@ export default function StudentSearchPage({ params }: PageProps) {
         setIsVerifying(false)
         return
       }
-      
+
       if (student) {
         // Use replace instead of push to prevent adding to history stack
         router.replace(
           `/results/${academicYear}/${examType}/${encodeURIComponent(examPeriod)}/student/${student.id}/multi-mode`,
-          undefined, // No need to specify URL object when using string URL
-          { shallow: true } // Prevents unnecessary data fetching if already on the same page
+          undefined,
+          { shallow: true }
         )
       } else {
         setNameError("Student not found. Please check the name, class, and roll number.")
@@ -141,47 +146,59 @@ export default function StudentSearchPage({ params }: PageProps) {
   const canSearch = selectedClass && rollNumber && studentName.trim().length >= 3
   const classStats = selectedClass ? getClassStats(selectedClass) : null
 
+  // Build class options 1st through 8th, keep numeric values for compatibility with findStudent
+  const classOptions = Array.from({ length: 8 }, (_, i) => {
+    const num = (i + 1).toString()
+    // ordinal labels (1st, 2nd, 3rd, 4th..)
+    const ordinals: { [k: string]: string } = {
+      "1": "1st",
+      "2": "2nd",
+      "3": "3rd",
+      "4": "4th",
+      "5": "5th",
+      "6": "6th",
+      "7": "7th",
+      "8": "8th"
+    }
+    return { value: num, label: `${ordinals[num]} Class` }
+  })
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-orange-100 to-green-100">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
-        <div className="relative py-12 px-4 sm:px-6 lg:px-8">
+        <div className="relative py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="flex flex-col items-center text-center space-y-6">
-              <Link href="/results" className="self-start">
-                <Button 
-                  variant="outline" 
+            <div className="flex items-center justify-between mb-4">
+              <Link href="/results" className="p-0">
+                <Button
+                  variant="outline"
                   className="bg-white/90 backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-200 border-gray-200 hover:border-gray-300"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Exams
                 </Button>
               </Link>
-              
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm w-full max-w-2xl">
-                <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-amber-600 to-green-700 bg-clip-text text-transparent">
-                  {getExamTitle()}
-                </h1>
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm sm:text-base">
-                  <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full flex items-center">
-                    <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                    </svg>
-                    {academicYear}
-                  </span>
-                  <span className="hidden sm:block text-gray-400">•</span>
-                  <span className="text-gray-600">Enter student details to view results</span>
-                </div>
-              </div>
+            </div>
+
+            {/* Centered title & description using main page typography */}
+            <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm w-full max-w-2xl mx-auto text-center">
+              <h1 className={`${largeTitle} mb-2 bg-gradient-to-r from-amber-600 to-green-700 bg-clip-text text-transparent`}>
+                {getExamTitle()}
+              </h1>
+              <p className={`${callout} text-gray-600`}>
+                Enter student details to view results
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-2xl">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-green-50 border-b border-gray-100">
+        {/* Form Card - white, rounded-2xl, shadow-sm, p-6 */}
+        <Card className="rounded-2xl shadow-sm border-0 bg-white overflow-visible">
+          <CardHeader className="pt-6 pb-0 px-6">
             <div className="flex items-center">
               <div className="p-2 rounded-lg bg-blue-100 text-blue-600 mr-4">
                 <Shield className="h-6 w-6" />
@@ -196,111 +213,102 @@ export default function StudentSearchPage({ params }: PageProps) {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-8">
-            <div className="space-y-8">
+
+          <CardContent className="p-6">
+            <div className="space-y-6">
               {/* Class Selection */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
-                    <BookOpen className="h-5 w-5" />
-                  </div>
-                  <label className="text-base font-medium text-gray-700">
-                    Class <span className="text-red-500">*</span>
-                  </label>
+              <div className="mb-6">
+                <label className="block text-base font-medium text-gray-700 mb-2">Select your class <span className="text-red-500">*</span></label>
+                <div>
+                  <Select value={selectedClass} onValueChange={setSelectedClass}>
+                    <SelectTrigger className="h-16 text-base border-2 border-gray-200 rounded-2xl shadow-sm px-4 flex items-center justify-between">
+                      <SelectValue placeholder="Select your class" />
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-0 shadow-lg">
+                      {classOptions.map((opt) => (
+                        <SelectItem
+                          key={opt.value}
+                          value={opt.value}
+                          className="text-base px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                        >
+                          <div className="flex items-center">
+                            <span className="font-medium">{opt.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {classStats && (
+                    <p className="text-sm text-gray-500 flex items-center mt-2">
+                      <Users className="mr-2 h-4 w-4 text-gray-400" />
+                      <span>{classStats.totalStudents} students in this class</span>
+                    </p>
+                  )}
                 </div>
-                
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="h-14 text-base border-2 border-gray-200 hover:border-blue-300 focus:border-blue-400 transition-colors rounded-xl shadow-sm">
-                    <SelectValue placeholder="Select your class" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-0 shadow-lg">
-                    {classes.map((cls) => (
-                      <SelectItem 
-                        key={cls} 
-                        value={cls} 
-                        className="text-base px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                      >
-                        <div className="flex items-center">
-                          <span className="font-medium">Class {cls}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                {classStats && (
-                  <p className="text-sm text-gray-500 flex items-center mt-1">
-                    <Users className="mr-2 h-4 w-4 text-gray-400" />
-                    <span>{classStats.totalStudents} students in this class</span>
-                  </p>
-                )}
               </div>
 
               {/* Roll Number */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
-                  <label className="text-base font-medium text-gray-700">
-                    Roll Number <span className="text-red-500">*</span>
-                  </label>
-                </div>
+              <div className="mb-6">
+                <label className="block text-base font-medium text-gray-700 mb-2">Roll Number <span className="text-red-500">*</span></label>
                 <div className="relative">
-                  <Input
+                  <input
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9\s]*"
                     placeholder="Enter Roll Number (e.g., 01, 2, 13)"
                     value={rollNumber}
                     onChange={(e) => handleRollNumberChange(e.target.value)}
-                    className="h-14 text-left pl-4 font-mono text-lg border-2 border-gray-200 hover:border-blue-300 focus:border-blue-400 rounded-xl shadow-sm transition-colors"
+                    className="h-16 w-full text-left pl-6 pr-14 text-lg font-mono border-2 border-gray-200 rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-0"
                   />
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
+                  {/* Clear button */}
+                  {rollNumber && (
+                    <button
+                      onClick={() => setRollNumber("")}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2"
+                      aria-label="Clear roll number"
+                    >
+                      <XIcon className="h-5 w-5 text-gray-400" />
+                    </button>
+                  )}
                 </div>
               </div>
 
               {/* Student Name */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <label className="text-base font-medium text-gray-700">
-                    Student Name <span className="text-red-500">*</span>
-                  </label>
-                </div>
-                
+              <div className="mb-6">
+                <label className="block text-base font-medium text-gray-700 mb-2">Student Name <span className="text-red-500">*</span></label>
                 <div className="relative">
-                  <Input
+                  <input
                     type="text"
                     placeholder="Enter Full Name (as per school records)"
                     value={studentName}
                     onChange={(e) => handleNameChange(e.target.value)}
-                    className={`h-14 text-base border-2 ${nameError ? "border-red-400" : "border-gray-200 hover:border-blue-300 focus:border-blue-400"} rounded-xl shadow-sm transition-colors pl-12`}
+                    className={`h-16 w-full text-left pl-6 pr-14 text-lg border-2 ${nameError ? "border-red-400" : "border-gray-200"} rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-0`}
                   />
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
+                  {/* Clear button */}
+                  {studentName && (
+                    <button
+                      onClick={() => {
+                        setStudentName("")
+                        setNameError("")
+                      }}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2"
+                      aria-label="Clear student name"
+                    >
+                      <XIcon className="h-5 w-5 text-gray-400" />
+                    </button>
+                  )}
                 </div>
-                
+
+                {/* Error or info block */}
                 {nameError ? (
-                  <div className="flex items-start p-3 rounded-lg bg-red-50 border border-red-100">
+                  <div className="flex items-start p-3 rounded-lg bg-red-50 border border-red-100 mt-3">
                     <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-red-600">{nameError}</p>
                   </div>
                 ) : (
-                  <div className="flex items-start p-3 rounded-lg bg-blue-50 border border-blue-100">
+                  <div className="flex items-start p-3 rounded-lg bg-blue-50 border border-blue-100 mt-3">
                     <svg className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -311,30 +319,30 @@ export default function StudentSearchPage({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Search Button */}
+              {/* Submit Button */}
               <div className="pt-2">
                 <Button
                   onClick={handleSearch}
                   disabled={!canSearch || isVerifying}
-                  className={`w-full h-16 text-lg font-medium rounded-xl shadow-md hover:shadow-lg transform transition-all duration-300 ${
-                    canSearch 
-                      ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800' 
-                      : 'bg-gray-300 cursor-not-allowed'
+                  className={`w-full h-16 text-lg font-medium rounded-2xl shadow-md transform transition-all duration-300 ${
+                    canSearch && !isVerifying
+                      ? 'bg-blue-500 text-white hover:bg-blue-600'
+                      : 'bg-blue-300 text-white cursor-not-allowed'
                   }`}
                 >
                   {isVerifying ? (
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
-                      <span>Verifying Student Details...</span>
+                      <span>Verifying...</span>
                     </div>
                   ) : (
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-center">
                       <Search className="h-5 w-5 mr-3" />
-                      <span className="text-lg">View Result</span>
+                      <span className="text-lg">Show Result</span>
                     </div>
                   )}
                 </Button>
-                
+
                 <p className="mt-3 text-center text-sm text-gray-500">
                   By continuing, you agree to our terms of service and privacy policy
                 </p>
@@ -343,10 +351,10 @@ export default function StudentSearchPage({ params }: PageProps) {
           </CardContent>
         </Card>
 
-        {/* Information Card */}
+        {/* Information Cards - spacing and visual consistency */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50 overflow-hidden">
-            <div className="p-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50 overflow-hidden rounded-2xl">
+            <div className="p-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-2xl"></div>
             <CardHeader className="pb-2">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-blue-100 text-blue-600 mr-4">
@@ -375,8 +383,8 @@ export default function StudentSearchPage({ params }: PageProps) {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-green-50 to-green-100/50 overflow-hidden">
-            <div className="p-1 bg-gradient-to-r from-green-500 to-green-600"></div>
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-green-50 to-green-100/50 overflow-hidden rounded-2xl">
+            <div className="p-1 bg-gradient-to-r from-green-500 to-green-600 rounded-t-2xl"></div>
             <CardHeader className="pb-2">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-green-100 text-green-600 mr-4">
