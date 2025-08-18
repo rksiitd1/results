@@ -76,17 +76,29 @@ export default function StudentSearchPage({ params }: PageProps) {
     setNameError("")
   }
 
+  // Normalize roll number by removing leading zeros and extra spaces
+  const normalizeRollNumber = (roll: string) => {
+    return roll.trim().replace(/^0+/, '') // Remove leading zeros and trim spaces
+  }
+
+  const handleRollNumberChange = (value: string) => {
+    // Only allow numbers and spaces, then normalize
+    const normalized = value.replace(/[^0-9\s]/g, '')
+    setRollNumber(normalized)
+  }
+
   const handleSearch = () => {
-    if (!selectedClass || !rollNumber || !studentName) {
-      return
-    }
-
+    if (!selectedClass || !rollNumber || !studentName.trim()) return
+    
+    // Normalize roll number before search
+    const normalizedRoll = normalizeRollNumber(rollNumber)
+    
+    // Show loading state
     setIsVerifying(true)
-
-    // Simulate verification delay
+    
+    // Simulate API call delay
     setTimeout(() => {
-      const student = findStudent(selectedClass, rollNumber, studentName)
-
+      const student = findStudent(selectedClass, normalizedRoll, studentName)
       if (student) {
         const isMultiModeExam =
           examType === "bodha-manthan" && examPeriod === "I - July 2025" && academicYear === "2025-26"
@@ -129,7 +141,7 @@ export default function StudentSearchPage({ params }: PageProps) {
               </Link>
               
               <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm w-full max-w-2xl">
-                <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-navy-700 to-green-700 bg-clip-text text-transparent">
+                <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-amber-600 to-green-700 bg-clip-text text-transparent">
                   {getExamTitle()}
                 </h1>
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm sm:text-base">
@@ -210,20 +222,29 @@ export default function StudentSearchPage({ params }: PageProps) {
                 <div className="flex items-center space-x-2">
                   <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                   </div>
                   <label className="text-base font-medium text-gray-700">
                     Roll Number <span className="text-red-500">*</span>
                   </label>
                 </div>
-                <Input
-                  type="text"
-                  placeholder="Enter Roll Number (e.g., 01, 02, 12)"
-                  value={rollNumber}
-                  onChange={(e) => setRollNumber(e.target.value)}
-                  className="h-14 text-center font-mono text-lg border-2 border-gray-200 hover:border-blue-300 focus:border-blue-400 rounded-xl shadow-sm transition-colors"
-                />
+                <div className="relative">
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9\s]*"
+                    placeholder="Enter Roll Number (e.g., 01, 2, 13)"
+                    value={rollNumber}
+                    onChange={(e) => handleRollNumberChange(e.target.value)}
+                    className="h-14 text-left pl-4 font-mono text-lg border-2 border-gray-200 hover:border-blue-300 focus:border-blue-400 rounded-xl shadow-sm transition-colors"
+                  />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
               {/* Student Name */}
