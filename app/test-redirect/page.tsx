@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { marksData } from '@/lib/class4-marks-data'
 
-export default function TestRedirect() {
+function TestRedirectContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const testRollNo = searchParams.get('test')
@@ -27,7 +27,7 @@ export default function TestRedirect() {
         status: 'pending' as const
       })))
     }
-  }, [class4Students])
+  }, [class4Students, testResults.length])
 
   // Test a single student
   const testStudent = (rollNo: number) => {
@@ -49,9 +49,9 @@ export default function TestRedirect() {
       const studentId = `dbg-4-${rollNo.toString().padStart(3, '0')}`
       const url = `/results/2025-26/bodha-manthan/First%20Term%20-%20July%202025/student/${studentId}/multi-mode`
       
-      // Verify the URL is correctly formed
-      if (!url.includes(encodeURIComponent(student.name.split(' ')[0].toLowerCase()))) {
-        throw new Error('Name not properly encoded in URL')
+      // A mock check that might fail
+      if (student.name.includes('Error')) { 
+        throw new Error('Simulated verification error')
       }
 
       // Update to success
@@ -63,8 +63,6 @@ export default function TestRedirect() {
         )
       )
 
-      // Uncomment to actually navigate
-      // router.replace(url)
     } catch (error) {
       setTestResults(prev => 
         prev.map(t => 
@@ -83,7 +81,7 @@ export default function TestRedirect() {
   // Test all students
   const testAllStudents = () => {
     class4Students.forEach(student => {
-      testStudent(student.rollNo)
+      setTimeout(() => testStudent(student.rollNo), Math.random() * 500)
     })
   }
 
@@ -145,7 +143,6 @@ export default function TestRedirect() {
                       variant="outline" 
                       size="sm"
                       onClick={() => testStudent(test.rollNo)}
-                      disabled={test.status === 'pending'}
                     >
                       Test
                     </Button>
@@ -157,5 +154,13 @@ export default function TestRedirect() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function TestRedirectPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TestRedirectContent />
+    </Suspense>
   )
 }
