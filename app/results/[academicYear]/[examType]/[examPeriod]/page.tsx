@@ -3,25 +3,15 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Search, AlertCircle, Users, BookOpen, Shield, ChevronRight, X as XIcon } from "lucide-react"
-import { classes as classesFromLib, findStudent, getClassStats } from "@/lib/data"
+import { classes, findStudent, getClassStats } from "@/lib/data"
 
-// Design tokens reused from main results page
+// Typography tokens (from main results page)
 const largeTitle = "text-3xl font-semibold tracking-tight"
 const callout = "text-base font-normal leading-6 text-gray-600"
-
-// Small design palette (kept for reference)
-const colors = {
-  saffron: "#FF9933",
-  darkgreen: "#138808",
-  navy: "#00008B",
-  lightgray: "#F5F5F5",
-  headerbg: "#FFF8DC",
-}
 
 interface PageProps {
   params: Promise<{
@@ -29,6 +19,100 @@ interface PageProps {
     examType: string
     examPeriod: string
   }>
+}
+
+/**
+ * iOS-style bottom sheet select.
+ * IMPORTANT: purely presentational — it uses the `value` strings you pass (we pass values from `classes`).
+ */
+const IOSSelect = ({
+  value,
+  onValueChange,
+  items,
+  placeholder,
+  disabled = false
+}: {
+  value: string
+  onValueChange: (value: string) => void
+  items: { value: string; label: string }[]
+  placeholder: string
+  disabled?: boolean
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedLabel, setSelectedLabel] = useState("")
+
+  useEffect(() => {
+    const selected = items.find(item => item.value === value)
+    setSelectedLabel(selected?.label || "")
+  }, [value, items])
+
+  return (
+    <div className="relative w-full">
+      <button
+        className={`w-full text-left p-4 rounded-2xl border-2 flex items-center justify-between ${
+          disabled
+            ? "bg-gray-100 text-gray-400 border-gray-200"
+            : "bg-white text-gray-900 border-gray-200 active:bg-gray-50"
+        }`}
+        onClick={() => !disabled && setIsOpen(true)}
+        disabled={disabled}
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+      >
+        <span className={`truncate ${!value ? "text-gray-400" : ""}`}>{selectedLabel || placeholder}</span>
+        <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "transform rotate-90" : ""}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+          >
+            <motion.div
+              className="w-full max-w-4xl bg-white rounded-t-2xl p-4 max-h-[80vh] overflow-y-auto mx-auto"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-medium text-gray-900">{placeholder}</h3>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 -mr-2 text-gray-500"
+                  aria-label="Close picker"
+                >
+                  <XIcon className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {items.map((item) => (
+                  <button
+                    key={item.value}
+                    className={`w-full text-left p-3 rounded-lg ${value === item.value ? "bg-blue-50 text-blue-600" : "text-gray-900 active:bg-gray-50"}`}
+                    onClick={() => {
+                      onValueChange(item.value)
+                      setIsOpen(false)
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
 }
 
 export default function StudentSearchPage({ params }: PageProps) {
@@ -63,6 +147,7 @@ export default function StudentSearchPage({ params }: PageProps) {
   const { academicYear, examType, examPeriod: rawExamPeriod } = resolvedParams
   const examPeriod = decodeURIComponent(rawExamPeriod)
 
+  // -- KEEP EXACT LOGIC FOR TITLE --
   const getExamTitle = () => {
     switch (examType) {
       case "jigyasa-anveshan":
@@ -76,6 +161,7 @@ export default function StudentSearchPage({ params }: PageProps) {
     }
   }
 
+  // -- PRESERVE ALL ORIGINAL LOGIC (validation, normalization, matching) --
   const handleNameChange = (value: string) => {
     // Allow letters, spaces, and common name characters
     const cleaned = value.replace(/[^\p{L}\s'-]/gu, '')
@@ -83,17 +169,14 @@ export default function StudentSearchPage({ params }: PageProps) {
     setNameError("")
   }
 
-  // Normalize roll number by removing leading zeros and extra spaces
   const normalizeRollNumber = (roll: string) => {
     return roll.trim().replace(/^0+/, '') // Remove leading zeros and trim spaces
   }
 
-  // Normalize name for search (trim, lowercase, and remove extra spaces)
   const normalizeName = (name: string) => {
     return name.trim().toLowerCase().replace(/\s+/g, ' ')
   }
 
-  // Check if search name matches student name (case-insensitive and partial match)
   const isNameMatch = (searchName: string, studentName: string) => {
     if (!searchName || !studentName) return false
     const normalizedSearch = normalizeName(searchName)
@@ -107,6 +190,7 @@ export default function StudentSearchPage({ params }: PageProps) {
     setRollNumber(normalized)
   }
 
+  // <-- ORIGINAL handleSearch logic preserved exactly -->
   const handleSearch = () => {
     if (!selectedClass || !rollNumber || !studentName.trim()) return
 
@@ -133,8 +217,8 @@ export default function StudentSearchPage({ params }: PageProps) {
         // Use replace instead of push to prevent adding to history stack
         router.replace(
           `/results/${academicYear}/${examType}/${encodeURIComponent(examPeriod)}/student/${student.id}/multi-mode`,
-          undefined,
-          { shallow: true }
+          undefined, // No need to specify URL object when using string URL
+          { shallow: true } // Prevents unnecessary data fetching if already on the same page
         )
       } else {
         setNameError("Student not found. Please check the name, class, and roll number.")
@@ -146,22 +230,8 @@ export default function StudentSearchPage({ params }: PageProps) {
   const canSearch = selectedClass && rollNumber && studentName.trim().length >= 3
   const classStats = selectedClass ? getClassStats(selectedClass) : null
 
-  // Build class options 1st through 8th, keep numeric values for compatibility with findStudent
-  const classOptions = Array.from({ length: 8 }, (_, i) => {
-    const num = (i + 1).toString()
-    // ordinal labels (1st, 2nd, 3rd, 4th..)
-    const ordinals: { [k: string]: string } = {
-      "1": "1st",
-      "2": "2nd",
-      "3": "3rd",
-      "4": "4th",
-      "5": "5th",
-      "6": "6th",
-      "7": "7th",
-      "8": "8th"
-    }
-    return { value: num, label: `${ordinals[num]} Class` }
-  })
+  // Build items for picker using the exact `classes` values (so findStudent receives the same value it expects)
+  const classItems = classes.map((cls) => ({ value: cls, label: `Class ${cls}` }))
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -182,21 +252,18 @@ export default function StudentSearchPage({ params }: PageProps) {
               </Link>
             </div>
 
-            {/* Centered title & description using main page typography */}
             <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-sm w-full max-w-2xl mx-auto text-center">
               <h1 className={`${largeTitle} mb-2 bg-gradient-to-r from-amber-600 to-green-700 bg-clip-text text-transparent`}>
                 {getExamTitle()}
               </h1>
-              <p className={`${callout} text-gray-600`}>
-                Enter student details to view results
-              </p>
+              <p className={`${callout} text-gray-600`}>Enter student details to view results</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Form Card - white, rounded-2xl, shadow-sm, p-6 */}
+        {/* Form Card */}
         <Card className="rounded-2xl shadow-sm border-0 bg-white overflow-visible">
           <CardHeader className="pt-6 pb-0 px-6">
             <div className="flex items-center">
@@ -204,49 +271,29 @@ export default function StudentSearchPage({ params }: PageProps) {
                 <Shield className="h-6 w-6" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-gray-800">
-                  Student Verification
-                </CardTitle>
-                <CardDescription className="text-gray-500">
-                  Please provide the exact student details to access the result
-                </CardDescription>
+                <CardTitle className="text-2xl font-bold text-gray-800">Student Verification</CardTitle>
+                <CardDescription className="text-gray-500">Please provide the exact student details to access the result</CardDescription>
               </div>
             </div>
           </CardHeader>
 
           <CardContent className="p-6">
             <div className="space-y-6">
-              {/* Class Selection */}
+              {/* Class Selection (iOS sheet) */}
               <div className="mb-6">
                 <label className="block text-base font-medium text-gray-700 mb-2">Select your class <span className="text-red-500">*</span></label>
-                <div>
-                  <Select value={selectedClass} onValueChange={setSelectedClass}>
-                    <SelectTrigger className="h-16 text-base border-2 border-gray-200 rounded-2xl shadow-sm px-4 flex items-center justify-between">
-                      <SelectValue placeholder="Select your class" />
-                      <ChevronRight className="h-5 w-5 text-gray-400" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-0 shadow-lg">
-                      {classOptions.map((opt) => (
-                        <SelectItem
-                          key={opt.value}
-                          value={opt.value}
-                          className="text-base px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-center">
-                            <span className="font-medium">{opt.label}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  {classStats && (
-                    <p className="text-sm text-gray-500 flex items-center mt-2">
-                      <Users className="mr-2 h-4 w-4 text-gray-400" />
-                      <span>{classStats.totalStudents} students in this class</span>
-                    </p>
-                  )}
-                </div>
+                <IOSSelect
+                  value={selectedClass}
+                  onValueChange={setSelectedClass}
+                  items={classItems}
+                  placeholder="Select your class"
+                />
+                {classStats && (
+                  <p className="text-sm text-gray-500 flex items-center mt-2">
+                    <Users className="mr-2 h-4 w-4 text-gray-400" />
+                    <span>{classStats.totalStudents} students in this class</span>
+                  </p>
+                )}
               </div>
 
               {/* Roll Number */}
@@ -262,7 +309,6 @@ export default function StudentSearchPage({ params }: PageProps) {
                     onChange={(e) => handleRollNumberChange(e.target.value)}
                     className="h-16 w-full text-left pl-6 pr-14 text-lg font-mono border-2 border-gray-200 rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-0"
                   />
-                  {/* Clear button */}
                   {rollNumber && (
                     <button
                       onClick={() => setRollNumber("")}
@@ -286,7 +332,6 @@ export default function StudentSearchPage({ params }: PageProps) {
                     onChange={(e) => handleNameChange(e.target.value)}
                     className={`h-16 w-full text-left pl-6 pr-14 text-lg border-2 ${nameError ? "border-red-400" : "border-gray-200"} rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-0`}
                   />
-                  {/* Clear button */}
                   {studentName && (
                     <button
                       onClick={() => {
@@ -301,7 +346,6 @@ export default function StudentSearchPage({ params }: PageProps) {
                   )}
                 </div>
 
-                {/* Error or info block */}
                 {nameError ? (
                   <div className="flex items-start p-3 rounded-lg bg-red-50 border border-red-100 mt-3">
                     <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
@@ -325,9 +369,7 @@ export default function StudentSearchPage({ params }: PageProps) {
                   onClick={handleSearch}
                   disabled={!canSearch || isVerifying}
                   className={`w-full h-16 text-lg font-medium rounded-2xl shadow-md transform transition-all duration-300 ${
-                    canSearch && !isVerifying
-                      ? 'bg-blue-500 text-white hover:bg-blue-600'
-                      : 'bg-blue-300 text-white cursor-not-allowed'
+                    canSearch && !isVerifying ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-blue-300 text-white cursor-not-allowed"
                   }`}
                 >
                   {isVerifying ? (
@@ -351,7 +393,7 @@ export default function StudentSearchPage({ params }: PageProps) {
           </CardContent>
         </Card>
 
-        {/* Information Cards - spacing and visual consistency */}
+        {/* Info Cards */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50 overflow-hidden rounded-2xl">
             <div className="p-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-2xl"></div>
@@ -360,9 +402,7 @@ export default function StudentSearchPage({ params }: PageProps) {
                 <div className="p-2 rounded-lg bg-blue-100 text-blue-600 mr-4">
                   <Shield className="h-5 w-5" />
                 </div>
-                <CardTitle className="text-lg font-semibold text-gray-800">
-                  Verification Requirements
-                </CardTitle>
+                <CardTitle className="text-lg font-semibold text-gray-800">Verification Requirements</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-0">
@@ -392,9 +432,7 @@ export default function StudentSearchPage({ params }: PageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <CardTitle className="text-lg font-semibold text-gray-800">
-                  Need Help?
-                </CardTitle>
+                <CardTitle className="text-lg font-semibold text-gray-800">Need Help?</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-0">
