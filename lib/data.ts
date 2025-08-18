@@ -826,19 +826,29 @@ export const examTypes = {
 
 import { marksData } from "./class4-marks-data"
 
+// Normalize name for comparison (lowercase and trim)
+const normalizeName = (name: string | undefined | null): string => {
+  if (!name) return ''
+  return name.toString().trim().toLowerCase()
+}
+
 export function findStudent(className: string, rollNo: string, name: string): StudentData | null {
-  // First check in the main students array
+  const normalizedSearchName = normalizeName(name)
+  
+  // First check in the main students array with partial name match
   let student = students.find(
-    (s) => s.class === className && s.rollNo === rollNo && s.name.toLowerCase() === name.toLowerCase(),
+    (s) => s.class === className && 
+           s.rollNo === rollNo && 
+           normalizeName(s.name).includes(normalizedSearchName)
   )
   
-  // If not found and it's class 4, check in marks data
+  // If not found and it's class 4, check in marks data with partial name match
   if (!student && className === '4th') {
     const class4Data = marksData.find(c => c.className === '4')
     if (class4Data) {
       const rollNum = parseInt(rollNo, 10)
       const studentInMarks = class4Data.students.find(
-        s => s.rollNo === rollNum && s.name.toLowerCase() === name.toLowerCase()
+        s => s.rollNo === rollNum && normalizeName(s.name).includes(normalizedSearchName)
       )
       
       if (studentInMarks) {

@@ -105,14 +105,14 @@ export default function StudentSearchPage({ params }: PageProps) {
   const handleSearch = () => {
     if (!selectedClass || !rollNumber || !studentName.trim()) return
     
-    // Normalize roll number before search
-    const normalizedRoll = normalizeRollNumber(rollNumber)
-    
     // Show loading state
     setIsVerifying(true)
     
-    // Simulate API call delay
-    setTimeout(() => {
+    // Use requestAnimationFrame to ensure UI updates before heavy computation
+    requestAnimationFrame(() => {
+      // Normalize roll number before search
+      const normalizedRoll = normalizeRollNumber(rollNumber)
+      
       // Find student with class and roll number match first
       const student = findStudent(selectedClass, normalizedRoll)
       
@@ -123,16 +123,19 @@ export default function StudentSearchPage({ params }: PageProps) {
         setIsVerifying(false)
         return
       }
+      
       if (student) {
-        // Always redirect to multi-mode result page
-        router.push(
+        // Use replace instead of push to prevent adding to history stack
+        router.replace(
           `/results/${academicYear}/${examType}/${encodeURIComponent(examPeriod)}/student/${student.id}/multi-mode`,
+          undefined, // No need to specify URL object when using string URL
+          { shallow: true } // Prevents unnecessary data fetching if already on the same page
         )
       } else {
         setNameError("Student not found. Please check the name, class, and roll number.")
         setIsVerifying(false)
       }
-    }, 1000)
+    })
   }
 
   const canSearch = selectedClass && rollNumber && studentName.trim().length >= 3
