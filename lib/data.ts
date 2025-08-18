@@ -824,10 +824,38 @@ export const examTypes = {
   "pragya-siddhi": "Pragya Siddhi (Annual)",
 }
 
+import { marksData } from "./class4-marks-data"
+
 export function findStudent(className: string, rollNo: string, name: string): StudentData | null {
-  const student = students.find(
+  // First check in the main students array
+  let student = students.find(
     (s) => s.class === className && s.rollNo === rollNo && s.name.toLowerCase() === name.toLowerCase(),
   )
+  
+  // If not found and it's class 4, check in marks data
+  if (!student && className === '4th') {
+    const class4Data = marksData.find(c => c.className === '4')
+    if (class4Data) {
+      const rollNum = parseInt(rollNo, 10)
+      const studentInMarks = class4Data.students.find(
+        s => s.rollNo === rollNum && s.name.toLowerCase() === name.toLowerCase()
+      )
+      
+      if (studentInMarks) {
+        // Convert to StudentData format
+        return {
+          id: `dbg-4-${studentInMarks.rollNo.toString().padStart(3, '0')}`,
+          name: studentInMarks.name,
+          class: '4th',
+          rollNo: studentInMarks.rollNo.toString(),
+          fatherName: '', // These fields might not be available in marks data
+          motherName: '',
+          academicYear: ''
+        }
+      }
+    }
+  }
+  
   return student || null
 }
 
