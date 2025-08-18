@@ -196,43 +196,43 @@ export default function ResultsPage() {
     const availablePeriods = getAvailableExamPeriods(academicYear, examType)
 
     if (examType === "jigyasa-anveshan") {
-      return availablePeriods
-        .map((period) => {
-          const match = period.match(/^([IVX]+) - (\w+) (\d+)$/)
-          if (match) {
-            const [, roman, month, year] = match
-            const romanToNumber: { [key: string]: string } = {
-              I: "1",
-              II: "2",
-              III: "3",
-              IV: "4",
-              V: "5",
-              VI: "6",
-              VII: "7",
-              VIII: "8",
-              IX: "9",
-              X: "10",
-            }
-            return {
-              value: romanToNumber[roman] || "1",
-              label: `${roman} - ${month} ${year}`,
-              period,
-            }
-          }
-          return null
-        })
-        .filter(Boolean)
+      // For Jigyasa Anveshan, show all monthly assessments (I-X)
+      return Array.from({ length: 10 }, (_, i) => {
+        const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][i]
+        const monthNames = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January']
+        const year = academicYear.split('-')[i < 9 ? 0 : 1] // Get appropriate year based on month
+        
+        return {
+          value: `${i + 1}`,
+          label: `${roman} - ${monthNames[i]} ${year}`,
+          period: `${roman} - ${monthNames[i]} ${year}`
+        }
+      })
     } else if (examType === "bodha-manthan") {
-      return availablePeriods
-        .map((period) => {
-          if (period.includes("Mid-term")) {
-            return { value: "first", label: period, period }
-          } else if (period.includes("Final")) {
-            return { value: "second", label: period, period }
-          }
-          return null
-        })
-        .filter(Boolean)
+      // For Bodha Manthan, show July and November exams
+      const year = academicYear.split('-')
+      return [
+        {
+          value: "first",
+          label: `First Term - July ${year[0]}`,
+          period: `First Term - July ${year[0]}`
+        },
+        {
+          value: "second",
+          label: `Second Term - November ${year[0]}`,
+          period: `Second Term - November ${year[0]}`
+        }
+      ]
+    } else if (examType === "pragya-siddhi") {
+      // For Pragya Siddhi, show March of the academic year end
+      const year = academicYear.split('-')[1]
+      return [
+        {
+          value: "annual",
+          label: `Annual - March ${year}`,
+          period: `Annual - March ${year}`
+        }
+      ]
     }
 
     return []
@@ -273,7 +273,7 @@ export default function ResultsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 pb-32">
         <motion.div 
           className="mb-8"
           initial="hidden"
@@ -312,7 +312,7 @@ export default function ResultsPage() {
                   <h3 className={`${title3} text-gray-900 truncate`}>{type.name}</h3>
                   <p className={`${subheadline} text-gray-500 truncate`}>{type.description}</p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400" />
+                <SelectContent className="z-50 max-h-72 overflow-y-auto" />
               </motion.button>
             ))}
           </div>
@@ -408,12 +408,7 @@ export default function ResultsPage() {
         )}
 
         {/* Action Button */}
-        <motion.div 
-          className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-lg"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        >
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-sm border-t border-gray-100 shadow-lg">
           <Link 
             href={canProceed ? getNextUrl() : '#'}
             className={`block w-full rounded-xl py-4 text-center font-medium ${
@@ -424,7 +419,7 @@ export default function ResultsPage() {
           >
             {canProceed ? 'View Results' : 'Select exam details to continue'}
           </Link>
-        </motion.div>
+        </div>
 
         {/* Help Sheet */}
         <AnimatePresence>
