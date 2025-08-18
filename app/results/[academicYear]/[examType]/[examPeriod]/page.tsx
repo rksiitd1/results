@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Search, AlertCircle, Home } from "lucide-react"
+import { ArrowLeft, Search, AlertCircle, Home, X } from "lucide-react"
 import { classes, findStudent } from "@/lib/data"
 
 // Animation variants
@@ -26,9 +26,21 @@ const fadeIn = {
 }
 
 // Typography
+const largeTitle = "text-3xl font-semibold tracking-tight"
 const title1 = "text-2xl font-semibold tracking-tight"
 const title2 = "text-xl font-semibold tracking-tight"
+const title3 = "text-lg font-semibold tracking-tight"
+const headline = "text-base font-medium tracking-tight text-blue-500"
+const body = "text-base font-normal leading-6"
 const callout = "text-base font-normal leading-6 text-gray-600"
+const subheadline = "text-sm font-normal text-gray-500"
+const footnote = "text-xs font-normal text-gray-500"
+
+// Classes data
+const classesData = Array.from({ length: 8 }, (_, i) => ({
+  id: (i + 1).toString(),
+  name: `Class ${i + 1}${i === 0 ? 'st' : i === 1 ? 'nd' : i === 2 ? 'rd' : 'th'}`
+}))
 
 interface PageProps {
   params: {
@@ -40,7 +52,7 @@ interface PageProps {
 
 export default function StudentSearchPage({ params }: PageProps) {
   const router = useRouter()
-  const [selectedClass, setSelectedClass] = useState("")
+  const [selectedClass, setSelectedClass] = useState("4")
   const [rollNumber, setRollNumber] = useState("")
   const [studentName, setStudentName] = useState("")
   const [nameError, setNameError] = useState("")
@@ -127,13 +139,13 @@ export default function StudentSearchPage({ params }: PageProps) {
       {/* Main Content */}
       <div className="px-4 py-6 pb-32 max-w-4xl mx-auto lg:px-6">
         <motion.div 
-          className="mb-8"
+          className="mb-8 text-center"
           initial="hidden"
           animate="visible"
           variants={fadeIn}
         >
-          <h1 className={`${title1} text-gray-900 mb-2`}>Results</h1>
-          <p className={`${callout} text-gray-600`}>Check your examination results by selecting the details below</p>
+          <h1 className={`${largeTitle} text-gray-900 mb-2`}>{getExamTitle()}</h1>
+          <p className={`${callout} text-gray-600`}>Enter your details to view your results</p>
         </motion.div>
         
         <motion.div 
@@ -141,37 +153,26 @@ export default function StudentSearchPage({ params }: PageProps) {
           initial="hidden"
           animate="visible"
           variants={fadeIn}
+          transition={{ delay: 0.1 }}
         >
-          <div className="mb-6">
-            <Link href="/results" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-2">
-              <ArrowLeft className="w-4 h-4 mr-1" /> Back to Results
-            </Link>
-            <h1 className={`${title2} text-gray-900 mb-2`}>
-              {getExamTitle()}
-            </h1>
-            <p className={`${callout} text-gray-600`}>Enter your details to view your results</p>
-          </div>
           
           {/* Class Selection */}
           <div className="mb-6">
-            <label htmlFor="class" className="block text-sm font-medium text-gray-700 mb-2">
-              Select Class
-            </label>
             <div className="relative w-full">
               <select
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
-                className="w-full h-12 px-4 pr-10 text-base bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                className="w-full h-16 px-6 text-lg bg-white border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
               >
                 <option value="">Select your class</option>
-                {classes.map((cls) => (
+                {classesData.map((cls) => (
                   <option key={cls.id} value={cls.id}>
                     {cls.name}
                   </option>
                 ))}
               </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -189,54 +190,63 @@ export default function StudentSearchPage({ params }: PageProps) {
           </div>
           {/* Roll Number */}
           <div className="mb-6">
-            <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700 mb-2">
-              Roll Number
-            </label>
             <div className="relative">
-              <Input
+              <input
                 id="rollNumber"
                 type="text"
                 inputMode="numeric"
                 placeholder="Enter your roll number"
                 value={rollNumber}
                 onChange={(e) => handleRollNumberChange(e.target.value)}
-                className="w-full h-12 px-4 text-base border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full h-16 px-6 text-lg border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+              {rollNumber && (
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-6 flex items-center text-gray-400 hover:text-gray-500"
+                  onClick={() => setRollNumber("")}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              )}
             </div>
           </div>
 
           {/* Student Name */}
           <div className="mb-8">
-            <label htmlFor="studentName" className="block text-sm font-medium text-gray-700 mb-2">
-              Student Name (as per school records)
-            </label>
             <div className="relative">
-              <Input
+              <input
                 id="studentName"
                 type="text"
-                placeholder="Enter your full name"
+                placeholder="Enter your full name (as per school records)"
                 value={studentName}
-                onChange={(e) => handleNameChange(e.target.value)}
-                className={`w-full h-12 px-4 text-base border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${nameError ? 'border-red-500' : ''}`}
+                onChange={(e) => setStudentName(e.target.value)}
+                className={`w-full h-16 px-6 text-lg border-2 ${
+                  nameError ? 'border-red-300' : 'border-gray-200'
+                } rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               />
               {nameError && (
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none">
                   <AlertCircle className="h-5 w-5 text-red-500" />
                 </div>
               )}
             </div>
             {nameError && (
-              <p className="mt-2 text-sm text-red-600">{nameError}</p>
+              <p className="mt-2 text-sm text-red-600 px-2">{nameError}</p>
             )}
           </div>
 
-          <Button 
-            className="w-full h-14 bg-blue-500 hover:bg-blue-600 text-white text-base font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5"
+          <button
             disabled={!selectedClass || !rollNumber || !studentName || isVerifying}
             onClick={handleSearch}
+            className={`w-full h-16 text-lg font-medium text-white rounded-2xl transition-all duration-200 ${
+              !selectedClass || !rollNumber || !studentName || isVerifying
+                ? 'bg-blue-300 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 transform active:scale-95'
+            }`}
           >
             {isVerifying ? 'Verifying...' : 'Show Result'}
-          </Button>
+          </button>
         </motion.div>
       </div>
     </div>
