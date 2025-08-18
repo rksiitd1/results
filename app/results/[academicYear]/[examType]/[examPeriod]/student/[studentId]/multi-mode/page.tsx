@@ -173,7 +173,7 @@ export default async function MultiModeStudentResultPage({ params }: PageProps) 
     notFound()
   }
 
-  const backUrl = `/results/${academicYear}/${examType}/${examPeriod}`
+  const backUrl = `https://dbggurukulam.com/results/${academicYear}/${examType}/${examPeriod}`
   const examLabel = `${examType.replace("-", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())} - ${decodedExamPeriod} (${academicYear})`
 
   return (
