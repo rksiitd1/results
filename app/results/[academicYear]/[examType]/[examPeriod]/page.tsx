@@ -23,7 +23,8 @@ interface PageProps {
 
 /**
  * iOS-style bottom sheet select (presentation only).
- * It uses the string `value` you pass through — we pass values from `classes` so logic stays intact.
+ * Uses the string `value` you pass through — we pass values from `classes` so logic stays intact.
+ * Minor visual polish added (backdrop blur, smoother button).
  */
 const IOSSelect = ({
   value,
@@ -49,10 +50,10 @@ const IOSSelect = ({
   return (
     <div className="relative w-full">
       <button
-        className={`w-full text-left p-4 rounded-2xl border-2 flex items-center justify-between ${
+        className={`w-full text-left rounded-2xl border-2 flex items-center justify-between transition-shadow duration-150 ${
           disabled
-            ? "bg-gray-100 text-gray-400 border-gray-200"
-            : "bg-white text-gray-900 border-gray-200 active:bg-gray-50"
+            ? "p-3 sm:p-4 bg-gray-100 text-gray-400 border-gray-200"
+            : "p-3 sm:p-4 bg-white text-gray-900 border-gray-200 hover:shadow-sm active:bg-gray-50"
         }`}
         onClick={() => !disabled && setIsOpen(true)}
         disabled={disabled}
@@ -66,14 +67,17 @@ const IOSSelect = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center"
+            className="fixed inset-0 z-50 flex items-end justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
           >
+            {/* backdrop */}
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+
             <motion.div
-              className="w-full max-w-4xl bg-white rounded-t-2xl p-4 max-h-[80vh] overflow-y-auto mx-auto"
+              className="relative w-full max-w-4xl bg-white rounded-t-2xl p-4 max-h-[80vh] overflow-y-auto mx-auto z-10 shadow-2xl"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
@@ -97,7 +101,9 @@ const IOSSelect = ({
                 {items.map((item) => (
                   <button
                     key={item.value}
-                    className={`w-full text-left p-3 rounded-lg ${value === item.value ? "bg-blue-50 text-blue-600" : "text-gray-900 active:bg-gray-50"}`}
+                    className={`w-full text-left p-3 rounded-lg transition-colors ${
+                      value === item.value ? "bg-blue-50 text-blue-600" : "text-gray-900 hover:bg-gray-50"
+                    }`}
                     onClick={() => {
                       onValueChange(item.value)
                       setIsOpen(false)
@@ -254,8 +260,8 @@ export default function StudentSearchPage({ params }: PageProps) {
 
       {/* Main content — note the pb-32 so fixed bottom CTA doesn't overlap content */}
       <div className="px-4 py-6 pb-32 max-w-4xl mx-auto lg:px-6">
-        {/* Form Card */}
-        <Card className="rounded-2xl shadow-sm border-0 bg-white overflow-visible">
+        {/* Form Card - subtle hover and smoother shadow */}
+        <Card className="rounded-2xl shadow-sm border-0 bg-white overflow-visible hover:shadow-md transition-shadow">
           <CardHeader className="pt-6 pb-0 px-6">
             <div className="flex items-center">
               <div className="p-2 rounded-lg bg-blue-100 text-blue-600 mr-4">
@@ -272,12 +278,13 @@ export default function StudentSearchPage({ params }: PageProps) {
             <div className="space-y-6">
               {/* Class Selection */}
               <div className="mb-6">
-                <label className="block text-base font-medium text-gray-700 mb-2">Select your class <span className="text-red-500">*</span></label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Select your class <span className="text-red-500">*</span></label>
                 <IOSSelect
                   value={selectedClass}
                   onValueChange={setSelectedClass}
                   items={classItems}
                   placeholder="Select your class"
+                  disabled={false}
                 />
                 {classStats && (
                   <p className="text-sm text-gray-500 flex items-center mt-2">
@@ -289,7 +296,7 @@ export default function StudentSearchPage({ params }: PageProps) {
 
               {/* Roll Number */}
               <div className="mb-6">
-                <label className="block text-base font-medium text-gray-700 mb-2">Roll Number <span className="text-red-500">*</span></label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Roll Number <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <input
                     type="text"
@@ -298,7 +305,9 @@ export default function StudentSearchPage({ params }: PageProps) {
                     placeholder="Enter Roll Number (e.g., 01, 2, 13)"
                     value={rollNumber}
                     onChange={(e) => handleRollNumberChange(e.target.value)}
-                    className="h-16 w-full text-left pl-6 pr-14 text-lg font-mono border-2 border-gray-200 rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-0"
+                    // responsive heights/padding and responsive text size to avoid overflow on small screens
+                    className="h-14 sm:h-16 w-full text-left pl-4 sm:pl-6 pr-10 sm:pr-14 text-base sm:text-lg font-mono border-2 border-gray-200 rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    style={{ maxWidth: "100%" }}
                   />
                   {rollNumber && (
                     <button
@@ -314,14 +323,16 @@ export default function StudentSearchPage({ params }: PageProps) {
 
               {/* Student Name */}
               <div className="mb-6">
-                <label className="block text-base font-medium text-gray-700 mb-2">Student Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">Student Name <span className="text-red-500">*</span></label>
                 <div className="relative">
                   <input
                     type="text"
                     placeholder="Enter Full Name (as per school records)"
                     value={studentName}
                     onChange={(e) => handleNameChange(e.target.value)}
-                    className={`h-16 w-full text-left pl-6 pr-14 text-lg border-2 ${nameError ? "border-red-400" : "border-gray-200"} rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-0`}
+                    // responsive sizes and shorter padding on mobile so text doesn't disappear
+                    className={`h-14 sm:h-16 w-full text-left pl-4 sm:pl-6 pr-10 sm:pr-14 text-base sm:text-lg border-2 ${nameError ? "border-red-400" : "border-gray-200"} rounded-2xl shadow-sm transition-colors focus:outline-none focus:ring-2 ${nameError ? "focus:ring-red-100" : "focus:ring-blue-100"}`}
+                    style={{ maxWidth: "100%" }}
                   />
                   {studentName && (
                     <button
