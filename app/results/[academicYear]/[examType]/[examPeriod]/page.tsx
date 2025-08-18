@@ -72,13 +72,28 @@ export default function StudentSearchPage({ params }: PageProps) {
   }
 
   const handleNameChange = (value: string) => {
-    setStudentName(value)
+    // Allow letters, spaces, and common name characters
+    const cleaned = value.replace(/[^\p{L}\s'-]/gu, '')
+    setStudentName(cleaned)
     setNameError("")
   }
 
   // Normalize roll number by removing leading zeros and extra spaces
   const normalizeRollNumber = (roll: string) => {
     return roll.trim().replace(/^0+/, '') // Remove leading zeros and trim spaces
+  }
+
+  // Normalize name for search (trim, lowercase, and remove extra spaces)
+  const normalizeName = (name: string) => {
+    return name.trim().toLowerCase().replace(/\s+/g, ' ')
+  }
+
+  // Check if search name matches student name (case-insensitive and partial match)
+  const isNameMatch = (searchName: string, studentName: string) => {
+    if (!searchName || !studentName) return false
+    const normalizedSearch = normalizeName(searchName)
+    const normalizedStudent = normalizeName(studentName)
+    return normalizedStudent.includes(normalizedSearch)
   }
 
   const handleRollNumberChange = (value: string) => {
@@ -98,7 +113,16 @@ export default function StudentSearchPage({ params }: PageProps) {
     
     // Simulate API call delay
     setTimeout(() => {
-      const student = findStudent(selectedClass, normalizedRoll, studentName)
+      // Find student with class and roll number match first
+      const student = findStudent(selectedClass, normalizedRoll)
+      
+      // Then verify name matches (case-insensitive and partial match)
+      if (student && !isNameMatch(studentName, student.name)) {
+        // If name doesn't match, treat as not found
+        setNameError("No matching student found. Please check the details and try again.")
+        setIsVerifying(false)
+        return
+      }
       if (student) {
         const isMultiModeExam =
           examType === "bodha-manthan" && examPeriod === "I - July 2025" && academicYear === "2025-26"
@@ -263,7 +287,7 @@ export default function StudentSearchPage({ params }: PageProps) {
                 <div className="relative">
                   <Input
                     type="text"
-                    placeholder="Enter Full Name (exactly as registered)"
+                    placeholder="Enter Full Name (as per school records)"
                     value={studentName}
                     onChange={(e) => handleNameChange(e.target.value)}
                     className={`h-14 text-base border-2 ${nameError ? "border-red-400" : "border-gray-200 hover:border-blue-300 focus:border-blue-400"} rounded-xl shadow-sm transition-colors pl-12`}
