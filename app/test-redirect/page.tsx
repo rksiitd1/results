@@ -1,11 +1,11 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { marksData } from '@/lib/class4-marks-data'
 
-function TestRedirectContent() {
+export default function TestRedirect() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const testRollNo = searchParams.get('test')
@@ -157,13 +157,5 @@ function TestRedirectContent() {
         </div>
       </div>
     </div>
-  )
-}
-
-export default function TestRedirect() {
-  return (
-    <Suspense fallback={<div className="container mx-auto p-4">Loading test data...</div>}>
-      <TestRedirectContent />
-    </Suspense>
   )
 }
