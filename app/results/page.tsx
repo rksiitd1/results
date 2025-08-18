@@ -74,26 +74,26 @@ const examTypes = [
   {
     id: "jigyasa-anveshan",
     name: "Jigyāsa Anveshan",
-    description: "Monthly assessments I through X (April to January)",
+    description: "Monthly assessments (April to January, excluding July & November)",
     icon: <Search className="w-5 h-5 text-white" />,
     color: colors.systemBlue,
-    bgColor: "bg-blue-500"
+    bgColor: "bg-blue-500",
   },
   {
     id: "bodha-manthan",
     name: "Bodha Manthan",
-    description: "Mid-term (September) and Final (March) examinations",
+    description: "Term examinations (July & November)",
     icon: <BarChart3 className="w-5 h-5 text-white" />,
     color: colors.systemGreen,
-    bgColor: "bg-green-500"
+    bgColor: "bg-green-500",
   },
   {
     id: "pragya-siddhi",
     name: "Pragya Siddhi",
-    description: "Annual comprehensive assessment (March)",
+    description: "Annual assessment (March)",
     icon: <Trophy className="w-5 h-5 text-white" />,
     color: colors.systemOrange,
-    bgColor: "bg-orange-500"
+    bgColor: "bg-orange-500",
   }
 ]
 
@@ -120,54 +120,64 @@ const IOSSelect = ({
   }, [value, items])
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <button
+        className={`w-full text-left p-3 rounded-xl border ${
+          disabled 
+            ? 'bg-gray-100 text-gray-400 border-gray-200' 
+            : 'bg-white text-gray-900 border-gray-300 active:bg-gray-50'
+        }`}
         onClick={() => !disabled && setIsOpen(true)}
-        className={`w-full text-left py-3 px-4 rounded-xl bg-white border ${disabled ? 'opacity-60' : 'active:bg-gray-100'} transition-colors flex items-center justify-between`}
         disabled={disabled}
       >
-        <span className={`${value ? 'text-gray-900' : 'text-gray-400'}`}>
-          {selectedLabel || placeholder}
-        </span>
-        <ChevronRight className="w-4 h-4 text-gray-400" />
+        <div className="flex justify-between items-center">
+          <span className={`truncate ${!value ? 'text-gray-400' : ''}`}>
+            {selectedLabel || placeholder}
+          </span>
+          <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'transform rotate-90' : ''}`} />
+        </div>
       </button>
-      
+
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="fixed inset-0 bg-black/50 z-50 flex items-end"
+            className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
           >
             <motion.div 
-              className="w-full bg-white rounded-t-3xl p-5 max-h-[70vh] overflow-y-auto"
-              initial={{ y: 300, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 300, opacity: 0 }}
+              className="w-full max-w-4xl bg-white rounded-t-2xl p-4 max-h-[80vh] overflow-y-auto mx-auto"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={e => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-medium text-gray-900">{placeholder}</h3>
-                <button onClick={() => setIsOpen(false)} className="p-2 -mr-2">
-                  <X className="w-5 h-5 text-gray-500" />
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 -mr-2 text-gray-500"
+                >
+                  <X className="w-5 h-5" />
                 </button>
               </div>
+              
               <div className="space-y-2">
                 {items.map((item) => (
                   <button
                     key={item.value}
+                    className={`w-full text-left p-3 rounded-lg ${
+                      value === item.value 
+                        ? 'bg-blue-50 text-blue-600' 
+                        : 'text-gray-900 active:bg-gray-50'
+                    }`}
                     onClick={() => {
                       onValueChange(item.value)
                       setIsOpen(false)
                     }}
-                    className={`w-full text-left py-3 px-4 rounded-lg transition-colors ${
-                      value === item.value 
-                        ? 'bg-blue-500 text-white' 
-                        : 'active:bg-gray-100'
-                    }`}
                   >
                     {item.label}
                   </button>
@@ -186,7 +196,6 @@ export default function ResultsPage() {
   const [examType, setExamType] = useState("")
   const [examSubType, setExamSubType] = useState("")
   const [activeTab, setActiveTab] = useState("")
-  const [showHelp, setShowHelp] = useState(false)
 
   const canProceed = academicYear && examType && (examType === "pragya-siddhi" || examSubType)
 
@@ -196,16 +205,29 @@ export default function ResultsPage() {
     const availablePeriods = getAvailableExamPeriods(academicYear, examType)
 
     if (examType === "jigyasa-anveshan") {
-      // For Jigyasa Anveshan, show all monthly assessments (I-X)
-      return Array.from({ length: 10 }, (_, i) => {
-        const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][i]
-        const monthNames = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January']
-        const year = academicYear.split('-')[i < 9 ? 0 : 1] // Get appropriate year based on month
-        
+      // For Jigyasa Anveshan, show monthly assessments (April to January, excluding July & November)
+      const months = [
+        { name: 'April', roman: 'I' },
+        { name: 'May', roman: 'II' },
+        { name: 'June', roman: 'III' },
+        // Skip July (Bodha Manthan)
+        { name: 'August', roman: 'IV' },
+        { name: 'September', roman: 'V' },
+        { name: 'October', roman: 'VI' },
+        // Skip November (Bodha Manthan)
+        { name: 'December', roman: 'VII' },
+        { name: 'January', roman: 'VIII' }
+      ]
+      
+      const [startYear, endYear] = academicYear.split('-')
+      
+      return months.map(({ name, roman }, index) => {
+        // Use startYear for April-June, endYear for August-January
+        const year = index < 3 ? startYear : endYear
         return {
-          value: `${i + 1}`,
-          label: `${roman} - ${monthNames[i]} ${year}`,
-          period: `${roman} - ${monthNames[i]} ${year}`
+          value: roman,
+          label: `${roman} - ${name} ${year}`,
+          period: `${roman} - ${name} ${year}`
         }
       })
     } else if (examType === "bodha-manthan") {
@@ -273,7 +295,7 @@ export default function ResultsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 py-6 pb-32">
+      <div className="px-4 py-6 pb-32 max-w-4xl mx-auto lg:px-6">
         <motion.div 
           className="mb-8"
           initial="hidden"
@@ -312,7 +334,6 @@ export default function ResultsPage() {
                   <h3 className={`${title3} text-gray-900 truncate`}>{type.name}</h3>
                   <p className={`${subheadline} text-gray-500 truncate`}>{type.description}</p>
                 </div>
-                <SelectContent className="z-50 max-h-72 overflow-y-auto" />
               </motion.button>
             ))}
           </div>
@@ -321,7 +342,7 @@ export default function ResultsPage() {
         {/* Form Section */}
         {examType && (
           <motion.div 
-            className="bg-white rounded-2xl p-6 mb-6 shadow-sm"
+            className="bg-white rounded-2xl p-6 mb-6 shadow-sm w-full"
             initial="hidden"
             animate="visible"
             variants={fadeIn}
@@ -409,90 +430,19 @@ export default function ResultsPage() {
 
         {/* Action Button */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-sm border-t border-gray-100 shadow-lg">
-          <Link 
-            href={canProceed ? getNextUrl() : '#'}
-            className={`block w-full rounded-xl py-4 text-center font-medium ${
-              canProceed 
-                ? 'bg-blue-500 text-white active:bg-blue-600' 
-                : 'bg-gray-200 text-gray-500'
-            } transition-colors`}
-          >
-            {canProceed ? 'View Results' : 'Select exam details to continue'}
-          </Link>
-        </div>
-
-        {/* Help Sheet */}
-        <AnimatePresence>
-          {showHelp && (
-            <motion.div 
-              className="fixed inset-0 bg-black/50 z-50 flex items-end"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowHelp(false)}
+          <div className="max-w-4xl mx-auto">
+            <Link 
+              href={canProceed ? getNextUrl() : '#'}
+              className={`block w-full rounded-xl py-4 text-center font-medium ${
+                canProceed 
+                  ? 'bg-blue-500 text-white active:bg-blue-600' 
+                  : 'bg-gray-200 text-gray-500'
+              } transition-colors`}
             >
-              <motion.div 
-                className="w-full bg-white rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto"
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                onClick={e => e.stopPropagation()}
-              >
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className={`${title2} text-gray-900`}>Need Help?</h3>
-                  <button 
-                    onClick={() => setShowHelp(false)}
-                    className="p-2 -mr-2"
-                  >
-                    <X className="w-5 h-5 text-gray-500" />
-                  </button>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="flex items-start">
-                    <div className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
-                      <span className="text-blue-600 font-medium">1</span>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Select Exam Type</h4>
-                      <p className="text-gray-600">Choose between Jigyāsa Anveshan, Bodha Manthan, or Pragya Siddhi</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <div className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
-                      <span className="text-blue-600 font-medium">2</span>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Choose Academic Year</h4>
-                      <p className="text-gray-600">Select the relevant academic year for the examination</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <div className="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
-                      <span className="text-blue-600 font-medium">3</span>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Select Examination Period</h4>
-                      <p className="text-gray-600">Choose the specific month or term for the selected exam type</p>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <button 
-                      onClick={() => setShowHelp(false)}
-                      className="w-full py-3 px-4 bg-blue-500 text-white rounded-xl font-medium active:bg-blue-600 transition-colors"
-                    >
-                      Got it, thanks!
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              {canProceed ? 'View Results' : 'Select exam details to continue'}
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )
