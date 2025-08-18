@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Search, AlertCircle, Users, BookOpen, Shield, ChevronRight, X as XIcon } from "lucide-react"
 import { classes, findStudent, getClassStats } from "@/lib/data"
 
-// Typography tokens (from main results page)
+// Typography tokens (aligned with main results page)
 const largeTitle = "text-3xl font-semibold tracking-tight"
 const callout = "text-base font-normal leading-6 text-gray-600"
 
@@ -22,8 +22,8 @@ interface PageProps {
 }
 
 /**
- * iOS-style bottom sheet select.
- * IMPORTANT: purely presentational — it uses the `value` strings you pass (we pass values from `classes`).
+ * iOS-style bottom sheet select (presentation only).
+ * It uses the string `value` you pass through — we pass values from `classes` so logic stays intact.
  */
 const IOSSelect = ({
   value,
@@ -147,7 +147,7 @@ export default function StudentSearchPage({ params }: PageProps) {
   const { academicYear, examType, examPeriod: rawExamPeriod } = resolvedParams
   const examPeriod = decodeURIComponent(rawExamPeriod)
 
-  // -- KEEP EXACT LOGIC FOR TITLE --
+  // keep exact title logic
   const getExamTitle = () => {
     switch (examType) {
       case "jigyasa-anveshan":
@@ -161,16 +161,15 @@ export default function StudentSearchPage({ params }: PageProps) {
     }
   }
 
-  // -- PRESERVE ALL ORIGINAL LOGIC (validation, normalization, matching) --
+  // --- PRESERVE LOGIC: name cleaning, normalization, matching, roll normalization ---
   const handleNameChange = (value: string) => {
-    // Allow letters, spaces, and common name characters
     const cleaned = value.replace(/[^\p{L}\s'-]/gu, '')
     setStudentName(cleaned)
     setNameError("")
   }
 
   const normalizeRollNumber = (roll: string) => {
-    return roll.trim().replace(/^0+/, '') // Remove leading zeros and trim spaces
+    return roll.trim().replace(/^0+/, '')
   }
 
   const normalizeName = (name: string) => {
@@ -185,40 +184,31 @@ export default function StudentSearchPage({ params }: PageProps) {
   }
 
   const handleRollNumberChange = (value: string) => {
-    // Only allow numbers and spaces, then normalize
     const normalized = value.replace(/[^0-9\s]/g, '')
     setRollNumber(normalized)
   }
 
-  // <-- ORIGINAL handleSearch logic preserved exactly -->
+  // ORIGINAL handleSearch logic preserved exactly
   const handleSearch = () => {
     if (!selectedClass || !rollNumber || !studentName.trim()) return
 
-    // Show loading state
     setIsVerifying(true)
 
-    // Use requestAnimationFrame to ensure UI updates before heavy computation
     requestAnimationFrame(() => {
-      // Normalize roll number before search
       const normalizedRoll = normalizeRollNumber(rollNumber)
-
-      // Find student with class and roll number match first
       const student = findStudent(selectedClass, normalizedRoll)
 
-      // Then verify name matches (case-insensitive and partial match)
       if (student && !isNameMatch(studentName, student.name)) {
-        // If name doesn't match, treat as not found
         setNameError("No matching student found. Please check the details and try again.")
         setIsVerifying(false)
         return
       }
 
       if (student) {
-        // Use replace instead of push to prevent adding to history stack
         router.replace(
           `/results/${academicYear}/${examType}/${encodeURIComponent(examPeriod)}/student/${student.id}/multi-mode`,
-          undefined, // No need to specify URL object when using string URL
-          { shallow: true } // Prevents unnecessary data fetching if already on the same page
+          undefined,
+          { shallow: true }
         )
       } else {
         setNameError("Student not found. Please check the name, class, and roll number.")
@@ -230,7 +220,7 @@ export default function StudentSearchPage({ params }: PageProps) {
   const canSearch = selectedClass && rollNumber && studentName.trim().length >= 3
   const classStats = selectedClass ? getClassStats(selectedClass) : null
 
-  // Build items for picker using the exact `classes` values (so findStudent receives the same value it expects)
+  // class items built from original `classes` so findStudent receives expected values
   const classItems = classes.map((cls) => ({ value: cls, label: `Class ${cls}` }))
 
   return (
@@ -262,7 +252,8 @@ export default function StudentSearchPage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      {/* Main content — note the pb-32 so fixed bottom CTA doesn't overlap content */}
+      <div className="px-4 py-6 pb-32 max-w-4xl mx-auto lg:px-6">
         {/* Form Card */}
         <Card className="rounded-2xl shadow-sm border-0 bg-white overflow-visible">
           <CardHeader className="pt-6 pb-0 px-6">
@@ -279,7 +270,7 @@ export default function StudentSearchPage({ params }: PageProps) {
 
           <CardContent className="p-6">
             <div className="space-y-6">
-              {/* Class Selection (iOS sheet) */}
+              {/* Class Selection */}
               <div className="mb-6">
                 <label className="block text-base font-medium text-gray-700 mb-2">Select your class <span className="text-red-500">*</span></label>
                 <IOSSelect
@@ -363,31 +354,9 @@ export default function StudentSearchPage({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Submit Button */}
-              <div className="pt-2">
-                <Button
-                  onClick={handleSearch}
-                  disabled={!canSearch || isVerifying}
-                  className={`w-full h-16 text-lg font-medium rounded-2xl shadow-md transform transition-all duration-300 ${
-                    canSearch && !isVerifying ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-blue-300 text-white cursor-not-allowed"
-                  }`}
-                >
-                  {isVerifying ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
-                      <span>Verifying...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <Search className="h-5 w-5 mr-3" />
-                      <span className="text-lg">Show Result</span>
-                    </div>
-                  )}
-                </Button>
-
-                <p className="mt-3 text-center text-sm text-gray-500">
-                  By continuing, you agree to our terms of service and privacy policy
-                </p>
+              {/* Small note above bottom CTA */}
+              <div>
+                <p className="text-sm text-gray-500 text-center">By continuing, you agree to our terms of service and privacy policy</p>
               </div>
             </div>
           </CardContent>
@@ -454,6 +423,31 @@ export default function StudentSearchPage({ params }: PageProps) {
               </ul>
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      {/* Fixed bottom CTA (matches /results page style and placement) */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-sm border-t border-gray-100 shadow-lg">
+        <div className="max-w-4xl mx-auto">
+          <button
+            onClick={handleSearch}
+            disabled={!canSearch || isVerifying}
+            className={`block w-full rounded-2xl py-4 text-center font-medium h-16 text-lg transition-colors ${
+              canSearch && !isVerifying ? "bg-blue-500 text-white active:bg-blue-600" : "bg-gray-200 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            {isVerifying ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
+                <span>Verifying...</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                <Search className="h-5 w-5 mr-3" />
+                <span className="text-lg">Show Result</span>
+              </div>
+            )}
+          </button>
         </div>
       </div>
     </div>
