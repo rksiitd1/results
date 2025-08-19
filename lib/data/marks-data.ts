@@ -656,4 +656,135 @@ export const marksData: ClassData[] = [
       },
     ],
   },
+
+
+  // --- CLASS 7 DATA (Updated with Hindi & S.S.T. Marks) ---
+  {
+    className: "7",
+    students: [
+      {
+        rollNo: 1,
+        name: "Amar Kumar",
+        subjects: {
+          English: { written: 38, oral: 8, project: null },
+          Hindi: { written: 46, oral: 7, project: 9 },
+          Math: { written: 20, oral: 5, project: null },
+          Science: { written: 22, oral: 7, project: 8 },
+          SST: { written: 29, oral: 6, project: 8 }
+        }
+      },
+      {
+        rollNo: 2,
+        name: "Madhav Kumar",
+        subjects: {
+          English: { written: 61, oral: 8, project: null },
+          Hindi: { written: 55, oral: 8, project: 5 },
+          Math: { written: 75, oral: 9, project: null },
+          Science: { written: 48, oral: 7, project: 9 },
+          SST: { written: 54, oral: 7, project: 8 }
+        }
+      },
+      {
+        rollNo: 3,
+        name: "Divyanshu Kumar",
+        subjects: {
+          English: { written: 40, oral: 7, project: null },
+          Hindi: { written: 53, oral: 5, project: 0 },
+          Math: { written: 45, oral: 9, project: null },
+          Science: { written: 30, oral: 0, project: 6 },
+          SST: { written: 40, oral: 6, project: 0 }
+        }
+      },
+      {
+        rollNo: 4,
+        name: "Sonakshi Kumari",
+        subjects: {
+          English: { written: 18, oral: 6, project: null },
+          Hindi: { written: 23, oral: 7, project: 0 },
+          Math: { written: 10, oral: 4, project: null },
+          Science: { written: 23, oral: 5, project: 8 },
+          SST: { written: 9, oral: 5, project: 0 }
+        }
+      },
+      {
+        rollNo: 5,
+        name: "Dheeraj Kumar",
+        subjects: {
+          English: { written: null, oral: null, project: null },
+          Hindi: { written: null, oral: null, project: null },
+          Math: { written: null, oral: null, project: null },
+          Science: { written: null, oral: null, project: null },
+          SST: { written: null, oral: null, project: null }
+        }
+      },
+      {
+        rollNo: 6,
+        name: "Nayna Sen", // Matched with Nayna Kumari
+        subjects: {
+          English: { written: 55, oral: 9, project: null },
+          Hindi: { written: 38, oral: 6, project: 10 },
+          Math: { written: 19, oral: 5, project: null },
+          Science: { written: 33, oral: 9, project: 9 },
+          SST: { written: 25, oral: 6, project: 10 }
+        }
+      },
+      {
+        rollNo: 7,
+        name: "Ranveer Kumar",
+        subjects: {
+          English: { written: 27, oral: 7, project: null },
+          Hindi: { written: 41, oral: 7, project: 7 },
+          Math: { written: 32, oral: 6, project: null },
+          Science: { written: 23, oral: 9, project: 8 },
+          SST: { written: 25, oral: 5, project: 10 }
+        }
+      },
+      {
+        rollNo: 8,
+        name: "Harshvardhan Kumar",
+        subjects: {
+          English: { written: 9, oral: 3, project: null },
+          Hindi: { written: 21, oral: 8, project: 0 },
+          Math: { written: 12, oral: 4, project: null },
+          Science: { written: 19, oral: 5, project: 0 },
+          SST: { written: 11, oral: 6, project: 0 }
+        }
+      },
+      {
+        rollNo: 9,
+        name: "Ayush Kumar",
+        subjects: {
+          English: { written: 31, oral: 8, project: null },
+          Hindi: { written: 40, oral: 6, project: 7 },
+          Math: { written: 21, oral: 3, project: null },
+          Science: { written: 13, oral: 5, project: 10 },
+          SST: { written: 31, oral: 7, project: 9 }
+        }
+      },
+      {
+        rollNo: 10,
+        name: "Ritik Anand", // Matched with Ritik Kumar
+        subjects: {
+          English: { written: 66, oral: 9, project: null },
+          Hindi: { written: 45, oral: 9, project: 6 },
+          Math: { written: 51, oral: 9, project: null },
+          Science: { written: 43, oral: 9, project: 4 },
+          SST: { written: 35, oral: 8, project: 7 }
+        }
+      },
+      {
+        rollNo: 11,
+        name: "Roopak Kumar",
+        subjects: {
+          English: { written: 26, oral: 6, project: null },
+          Hindi: { written: 26, oral: 6, project: 0 },
+          Math: { written: 14, oral: 6, project: null },
+          Science: { written: 15, oral: 4, project: 2 },
+          SST: { written: 11, oral: 5, project: 0 }
+        }
+      }
+    ]
+  }
+
+
 ]
