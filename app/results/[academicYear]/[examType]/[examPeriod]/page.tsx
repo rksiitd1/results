@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Search, AlertCircle, Users, BookOpen, Shield, ChevronRight, X as XIcon } from "lucide-react"
-import { classes, findStudent, getClassStats } from "@/lib/data"
+import { findStudent, getClassStats } from "@/lib/data"
 
 // Typography tokens (aligned with main results page)
 const largeTitle = "text-3xl font-semibold tracking-tight"
@@ -226,7 +226,26 @@ export default function StudentSearchPage({ params }: PageProps) {
   const canSearch = selectedClass && rollNumber && studentName.trim().length >= 3
   const classStats = selectedClass ? getClassStats(selectedClass) : null
 
-  // class items built from original `classes` so findStudent receives expected values
+  // Inline class list so dropdown always shows expected options
+  const classes = [
+    "Nursery",
+    "LKG",
+    "UKG",
+    "1st",
+    "2nd",
+    "3rd",
+    "4th",
+    "5th",
+    "6th",
+    "7th",
+    "8th",
+    "9th",
+    "10th",
+    "11th",
+    "12th",
+  ]
+
+  // class items built from `classes` so findStudent receives expected values
   const classItems = classes.map((cls) => ({
     value: cls,
     label: /^(\d+)(st|nd|rd|th)$/.test(cls) ? `Class ${cls}` : cls
