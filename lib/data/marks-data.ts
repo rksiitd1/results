@@ -33,6 +33,95 @@ interface ClassData {
 export const marksData: ClassData[] = [
   // Data for other classes (Nursery, UKG, 1, 7) would go here.
 
+
+  // --- U.K.G. DATA (Updated with Written & Oral Marks) ---
+  {
+    className: "UKG",
+    students: [
+      {
+        rollNo: 1,
+        name: "Vaishnavi kumari",
+        subjects: {
+          English: { written: 57, oral: 12, project: 8 },
+          Hindi: { written: 35, oral: 10, project: 8 },
+          Math: { written: 30, oral: 8, project: 8 }
+        }
+      },
+      {
+        rollNo: 2,
+        name: "Soni kumari",
+        subjects: {
+          English: { written: 35, oral: 10, project: 4 },
+          Hindi: { written: 30, oral: 8, project: 4 },
+          Math: { written: 28, oral: 5, project: 4 }
+        }
+      },
+      {
+        rollNo: 3,
+        name: "Dhavansh kumar",
+        subjects: {
+          English: { written: 60, oral: 12, project: 8 },
+          Hindi: { written: 46, oral: 12, project: 8 },
+          Math: { written: 60, oral: 10, project: 8 }
+        }
+      },
+      {
+        rollNo: 4,
+        name: "Ansh yug",
+        subjects: {
+          English: { written: 50, oral: 12, project: 5 },
+          Hindi: { written: 40, oral: 10, project: 5 },
+          Math: { written: 60, oral: 10, project: 5 }
+        }
+      },
+      {
+        rollNo: 5,
+        name: "Sumit kumar",
+        subjects: {
+          English: { written: 60, oral: 12, project: 4 },
+          Hindi: { written: 55, oral: 10, project: 4 },
+          Math: { written: 60, oral: 8, project: 4 }
+        }
+      },
+      {
+        rollNo: 6,
+        name: "Krishna kumar",
+        subjects: {
+          English: { written: 27, oral: 10, project: 4 },
+          Hindi: { written: 45, oral: 8, project: 4 },
+          Math: { written: 32, oral: 5, project: 4 }
+        }
+      },
+      {
+        rollNo: 7,
+        name: "Aisha kumari",
+        subjects: {
+          English: { written: 57, oral: 14, project: 8 },
+          Hindi: { written: 40, oral: 10, project: 8 },
+          Math: { written: 50, oral: 5, project: 8 }
+        }
+      },
+      {
+        rollNo: 8,
+        name: "Aditi kumari",
+        subjects: {
+          English: { written: 32, oral: 12, project: 8 },
+          Hindi: { written: 62, oral: 10, project: 8 },
+          Math: { written: 60, oral: 8, project: 8 }
+        }
+      },
+      {
+        rollNo: 9,
+        name: "Prashant kumar",
+        subjects: {
+          English: { written: 27, oral: 10, project: 5 },
+          Hindi: { written: 40, oral: 10, project: 5 },
+          Math: { written: 60, oral: 10, project: 5 }
+        }
+      }
+    ]
+  },
+
   // --- CLASS 1 DATA (Updated with Project Marks) ---
   {
     className: "1",
