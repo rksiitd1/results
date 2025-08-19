@@ -36,31 +36,43 @@ interface ClassData {
   students: StudentMarks[]
 }
 
-// Helper function to get student data
+// Helper to convert class number to ordinal string (e.g., 1 -> "1st")
+function toOrdinal(n: number): string {
+  if (n === 1) return "1st"
+  if (n === 2) return "2nd"
+  if (n === 3) return "3rd"
+  return `${n}th`
+}
+
+// Helper function to get student data (supports dynamic ids like dbg-<class>-<roll>)
 async function getStudent(studentId: string) {
   // First check in regular students
   const student = students.find((s) => s.id === studentId)
-  
-  // If not found, check if it's a class 4 student
-  if (!student && studentId.startsWith('dbg-4-')) {
-    const rollNo = parseInt(studentId.replace('dbg-4-', ''), 10)
-    const class4Data = marksData.find(c => c.className === '4')
-    const studentInMarks = class4Data?.students.find(s => s.rollNo === rollNo)
-    
+
+  if (student) return student
+
+  // Dynamic id pattern: dbg-<class>-<roll>
+  const match = studentId.match(/^dbg-(\d+)-(\d+)$/)
+  if (match) {
+    const classNum = parseInt(match[1], 10)
+    const rollNo = parseInt(match[2], 10)
+    const classData = marksData.find((c) => c.className === String(classNum))
+    const studentInMarks = classData?.students.find((s) => s.rollNo === rollNo)
+
     if (studentInMarks) {
       return {
         id: studentId,
         name: studentInMarks.name,
-        class: '4th',
-        rollNo: studentInMarks.rollNo.toString(),
+        class: toOrdinal(classNum),
+        rollNo: studentInMarks.rollNo.toString().padStart(2, '0'),
         fatherName: '',
         motherName: '',
         academicYear: ''
       }
     }
   }
-  
-  return student || null
+
+  return null
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -80,8 +92,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const examTypeFormatted = examType.replace("-", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())
     const examPeriodFormatted = decodedExamPeriod.replace(/\b\w/g, (l: string) => l.toUpperCase())
 
-    const class4Data = marksData.find((c) => c.className === "4") as ClassData | undefined
-    const studentMarks = class4Data?.students.find((s) => s.name === student.name)
+    // Resolve class data based on student's class (ordinal like "1st", "4th")
+    const classNum = parseInt(student.class, 10)
+    const classData = marksData.find((c) => c.className === String(classNum)) as ClassData | undefined
+    const studentMarks = classData?.students.find((s) => s.name.toLowerCase() === student.name.toLowerCase())
 
     let totalMarks = 0
     let maxMarks = 0
@@ -145,10 +159,11 @@ export default async function MultiModeStudentResultPage({ params }: PageProps) 
     notFound()
   }
 
-  // Get class 4 data
-  const class4Data = marksData.find((c) => c.className === "4") as ClassData | undefined
-  if (!class4Data) {
-    console.error("Class 4 data not found")
+  // Resolve class data dynamically
+  const classNum = parseInt(student.class, 10)
+  const classData = marksData.find((c) => c.className === String(classNum)) as ClassData | undefined
+  if (!classData) {
+    console.error(`Class data not found for class ${student.class}`)
     notFound()
   }
 
@@ -158,12 +173,12 @@ export default async function MultiModeStudentResultPage({ params }: PageProps) 
   
   if (rollNo) {
     // First try to find by roll number if available
-    studentMarks = class4Data.students.find((s) => s.rollNo === rollNo)
+    studentMarks = classData.students.find((s) => s.rollNo === rollNo)
   }
   
   // Fall back to name matching if roll number not found or not available
   if (!studentMarks) {
-    studentMarks = class4Data.students.find((s) => 
+    studentMarks = classData.students.find((s) =>
       s.name.toLowerCase() === student.name.toLowerCase()
     )
   }
