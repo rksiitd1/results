@@ -855,7 +855,7 @@ export function findStudent(className: string, rollNo: string, name: string): St
         if (studentInMarks) {
           // Convert to StudentData format
           return {
-            id: `dbg-${classNum}-${studentInMarks.rollNo.toString().padStart(3, '0')}`,
+            id: `dbg-${classData.className}-${studentInMarks.rollNo.toString().padStart(3, '0')}`,
             name: studentInMarks.name,
             class: className,
             rollNo: studentInMarks.rollNo.toString().padStart(2, '0'),

@@ -51,19 +51,19 @@ async function getStudent(studentId: string) {
 
   if (student) return student
 
-  // Dynamic id pattern: dbg-<class>-<roll>
-  const match = studentId.match(/^dbg-(\d+)-(\d+)$/)
+  // Dynamic id pattern: dbg-<classToken>-<roll> (classToken can be numeric like '1' or alpha like 'UKG')
+  const match = studentId.match(/^dbg-([A-Za-z0-9]+)-(\d+)$/)
   if (match) {
-    const classNum = parseInt(match[1], 10)
+    const classToken = match[1]
     const rollNo = parseInt(match[2], 10)
-    const classData = marksData.find((c) => c.className === String(classNum))
+    const classData = marksData.find((c) => c.className === String(classToken))
     const studentInMarks = classData?.students.find((s) => s.rollNo === rollNo)
 
     if (studentInMarks) {
       return {
         id: studentId,
         name: studentInMarks.name,
-        class: toOrdinal(classNum),
+        class: /^[0-9]+$/.test(classToken) ? toOrdinal(parseInt(classToken, 10)) : classToken,
         rollNo: studentInMarks.rollNo.toString().padStart(2, '0'),
         fatherName: '',
         motherName: '',
@@ -92,9 +92,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const examTypeFormatted = examType.replace("-", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())
     const examPeriodFormatted = decodedExamPeriod.replace(/\b\w/g, (l: string) => l.toUpperCase())
 
-    // Resolve class data based on student's class (ordinal like "1st", "4th")
-    const classNum = parseInt(student.class, 10)
-    const classData = marksData.find((c) => c.className === String(classNum)) as ClassData | undefined
+    // Resolve class data based on student's class (ordinal like "1st" or token like "UKG")
+    const parsedNum = parseInt(student.class, 10)
+    const classKey = Number.isNaN(parsedNum) ? student.class : String(parsedNum)
+    const classData = marksData.find((c) => c.className === String(classKey)) as ClassData | undefined
     const studentMarks = classData?.students.find((s) => s.name.toLowerCase() === student.name.toLowerCase())
 
     let totalMarks = 0
@@ -159,9 +160,10 @@ export default async function MultiModeStudentResultPage({ params }: PageProps) 
     notFound()
   }
 
-  // Resolve class data dynamically
-  const classNum = parseInt(student.class, 10)
-  const classData = marksData.find((c) => c.className === String(classNum)) as ClassData | undefined
+  // Resolve class data dynamically for numeric (e.g., '1st') or token classes (e.g., 'UKG')
+  const parsedNum = parseInt(student.class, 10)
+  const classKey = Number.isNaN(parsedNum) ? student.class : String(parsedNum)
+  const classData = marksData.find((c) => c.className === String(classKey)) as ClassData | undefined
   if (!classData) {
     console.error(`Class data not found for class ${student.class}`)
     notFound()
