@@ -6,7 +6,7 @@ export * from "./question-papers"
 // Helper functions
 import { students, type StudentData } from "./students"
 import { examResults, type ExamResult } from "./exam-results"
-import { marksData } from "../class4-marks-data"
+import { marksData } from "./marks-data"
 
 // Normalize name for comparison (lowercase and trim)
 const normalizeName = (name: string | undefined | null): string => {

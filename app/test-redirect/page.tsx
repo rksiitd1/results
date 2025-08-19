@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { marksData } from '@/lib/class4-marks-data'
+import { marksData } from '@/lib/data/marks-data'
 
 function TestRedirectContent() {
   const router = useRouter()

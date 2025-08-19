@@ -824,7 +824,7 @@ export const examTypes = {
   "pragya-siddhi": "Pragya Siddhi (Annual)",
 }
 
-import { marksData } from "./class4-marks-data"
+import { marksData } from "./data/marks-data"
 
 // Normalize name for comparison (lowercase and trim)
 const normalizeName = (name: string | undefined | null): string => {

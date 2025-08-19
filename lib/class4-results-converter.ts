@@ -1,4 +1,4 @@
-import { marksData } from "./class4-marks-data"
+import { marksData } from "./data/marks-data"
 import type { ExamResult } from "./data"
 
 export function convertClass4MarksToResults(): ExamResult[] {

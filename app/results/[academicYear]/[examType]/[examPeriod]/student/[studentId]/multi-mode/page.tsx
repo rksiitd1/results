@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import MultiModeReportCard from "@/components/multi-mode-report-card"
 import ResultActions from "@/components/result-actions"
 import { students, getStudentById } from "@/lib/data"
-import { marksData } from "@/lib/class4-marks-data"
+import { marksData } from "@/lib/data/marks-data"
 import type { Metadata } from "next"
 
 interface PageProps {
