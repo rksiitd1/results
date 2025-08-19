@@ -845,24 +845,24 @@ export function findStudent(className: string, rollNo: string, name: string): St
   // If not found in main list, check marksData for the given class (supports all classes present there)
   if (!student) {
     const classNum = parseInt(className, 10) // handles ordinals like "1st", "4th"
-    if (!Number.isNaN(classNum)) {
-      const classData = marksData.find(c => c.className === String(classNum))
-      if (classData) {
-        const rollNum = parseInt(rollNo, 10)
-        const studentInMarks = classData.students.find(
-          s => s.rollNo === rollNum && normalizeName(s.name).includes(normalizedSearchName)
-        )
-        if (studentInMarks) {
-          // Convert to StudentData format
-          return {
-            id: `dbg-${classData.className}-${studentInMarks.rollNo.toString().padStart(3, '0')}`,
-            name: studentInMarks.name,
-            class: className,
-            rollNo: studentInMarks.rollNo.toString().padStart(2, '0'),
-            fatherName: '', // Not available in marks data
-            motherName: '',
-            academicYear: ''
-          }
+    const classData = Number.isNaN(classNum)
+      ? marksData.find(c => c.className === className) // handle tokens like 'UKG', 'LKG', 'Nursery'
+      : marksData.find(c => c.className === String(classNum))
+    if (classData) {
+      const rollNum = parseInt(rollNo, 10)
+      const studentInMarks = classData.students.find(
+        s => s.rollNo === rollNum && normalizeName(s.name).includes(normalizedSearchName)
+      )
+      if (studentInMarks) {
+        // Convert to StudentData format
+        return {
+          id: `dbg-${classData.className}-${studentInMarks.rollNo.toString().padStart(3, '0')}`,
+          name: studentInMarks.name,
+          class: className,
+          rollNo: studentInMarks.rollNo.toString().padStart(2, '0'),
+          fatherName: '', // Not available in marks data
+          motherName: '',
+          academicYear: ''
         }
       }
     }
