@@ -48,7 +48,7 @@ export const marksData: ClassData[] = [
       },
       {
         rollNo: 2,
-        name: "Panidhi priya", // No marks provided in the new table
+        name: "Paridhi priya", // No marks provided in the new table
         subjects: {
           English: { written: null, oral: null, project: 4 },
           Hindi: { written: null, oral: null, project: 4 },
