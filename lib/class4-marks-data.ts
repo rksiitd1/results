@@ -33,6 +33,170 @@ interface ClassData {
 export const marksData: ClassData[] = [
   // Data for other classes (Nursery, UKG, 1, 7) would go here.
 
+  // --- CLASS 1 DATA (Updated with Project Marks) ---
+  {
+    className: "1",
+    students: [
+      {
+        rollNo: 1,
+        name: "Kritika Kumari",
+        subjects: {
+          English: { written: 36, oral: 8, project: null },
+          Hindi: { written: 19, oral: 8, project: null },
+          Math: { written: 69, oral: 5, project: null }
+        }
+      },
+      {
+        rollNo: 2,
+        name: "Chitransh Kumar",
+        subjects: {
+          English: { written: 79, oral: 8, project: null },
+          Hindi: { written: 51, oral: 8, project: null },
+          Math: { written: 78, oral: 8, project: null }
+        }
+      },
+      {
+        rollNo: 3,
+        name: "Akshar Patel",
+        subjects: {
+          English: { written: 10, oral: 7, project: 10 },
+          Hindi: { written: 5, oral: 6, project: 10 },
+          Math: { written: 12, oral: 3, project: 10 }
+        }
+      },
+      {
+        rollNo: 4,
+        name: "Shivam Kumar", // Matched with Shivam Kumar Gupta
+        subjects: {
+          English: { written: 32, oral: 10, project: null },
+          Hindi: { written: 34, oral: 8, project: null },
+          Math: { written: 62, oral: 8, project: 10 }
+        }
+      },
+      {
+        rollNo: 5,
+        name: "Mayank Kumar (I)",
+        subjects: {
+          English: { written: 14, oral: 0, project: null },
+          Hindi: { written: 21, oral: 4, project: null },
+          Math: { written: 33, oral: 4, project: null }
+        }
+      },
+      {
+        rollNo: 6,
+        name: "Mayank Singh (II)",
+        subjects: {
+          English: { written: 48, oral: 6, project: 7 },
+          Hindi: { written: 35, oral: 6, project: 10 },
+          Math: { written: 70, oral: 7, project: 8 }
+        }
+      },
+      {
+        rollNo: 7,
+        name: "Aashiq", // Matched with Aashi
+        subjects: {
+          English: { written: 4, oral: 4, project: 9 },
+          Hindi: { written: 16, oral: 5, project: 8 },
+          Math: { written: 48, oral: 2, project: 8 }
+        }
+      },
+      {
+        rollNo: 8,
+        name: "Javed",
+        subjects: {
+          English: { written: 8, oral: 3, project: 8 },
+          Hindi: { written: 18, oral: 6, project: null },
+          Math: { written: 18, oral: 5, project: 8 }
+        }
+      },
+      {
+        rollNo: 9,
+        name: "Ranjeet Kumar", // Matched with Raneet Kumar
+        subjects: {
+          English: { written: 25, oral: 2, project: 9 },
+          Hindi: { written: 37, oral: 6, project: 9 },
+          Math: { written: 70, oral: 6, project: 9 }
+        }
+      },
+      {
+        rollNo: 10,
+        name: "Abhinandan Kumar",
+        subjects: {
+          English: { written: 2, oral: 5, project: 10 },
+          Hindi: { written: 51, oral: 5, project: 10 },
+          Math: { written: 49, oral: 6, project: 9 }
+        }
+      },
+      {
+        rollNo: 11,
+        name: "Anshu Kumar",
+        subjects: {
+          English: { written: 0, oral: 3, project: 10 },
+          Hindi: { written: 0, oral: 4, project: 9 },
+          Math: { written: 52, oral: 5, project: null }
+        }
+      },
+      {
+        rollNo: 12,
+        name: "Manisha Rani",
+        subjects: {
+          English: { written: 0, oral: 0, project: null },
+          Hindi: { written: 0, oral: 3, project: 7 },
+          Math: { written: 8, oral: 3, project: null }
+        }
+      },
+      {
+        rollNo: 13,
+        name: "Janvi Kumari",
+        subjects: {
+          English: { written: 6, oral: 3, project: 9 },
+          Hindi: { written: 43, oral: 6, project: 6 },
+          Math: { written: 69, oral: 4, project: 0 }
+        }
+      },
+      {
+        rollNo: 14,
+        name: "Anjali Kumari",
+        subjects: {
+          English: { written: null, oral: null, project: null },
+          Hindi: { written: null, oral: null, project: null },
+          Math: { written: null, oral: null, project: null }
+        }
+      },
+      {
+        rollNo: 15,
+        name: "Pankaj Kumar",
+        subjects: {
+          English: { written: 60, oral: 4, project: null },
+          Hindi: { written: 56, oral: 5, project: null },
+          Math: { written: null, oral: 7, project: null }
+        }
+      },
+      {
+        rollNo: 16,
+        name: "Bhagwati Kumari",
+        subjects: {
+          English: { written: 10, oral: 2, project: null },
+          Hindi: { written: 0, oral: 3, project: null },
+          Math: { written: 15, oral: 3, project: null }
+        }
+      },
+      {
+        rollNo: 17,
+        name: "Kajal Kumari",
+        subjects: {
+          English: { written: null, oral: null, project: null },
+          Hindi: { written: null, oral: null, project: null },
+          Math: { written: null, oral: null, project: null }
+        }
+      }
+    ]
+  },
+
+
+
+
+
   // --- CLASS 4 DATA (Updated with Project Marks) ---
   {
     className: "4",
