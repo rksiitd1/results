@@ -33,6 +33,133 @@ interface ClassData {
 export const marksData: ClassData[] = [
   // Data for other classes (Nursery, UKG, 1, 7) would go here.
 
+  // --- NURSERY DATA (Updated with Written & Oral Marks) ---
+  {
+    className: "Nursery",
+    students: [
+      {
+        rollNo: 1,
+        name: "Ishika kumari",
+        subjects: {
+          English: { written: 20, oral: 8, project: 4 },
+          Hindi: { written: 20, oral: 10, project: 4 },
+          Math: { written: 20, oral: 5, project: 4 }
+        }
+      },
+      {
+        rollNo: 2,
+        name: "Panidhi priya", // No marks provided in the new table
+        subjects: {
+          English: { written: null, oral: null, project: 4 },
+          Hindi: { written: null, oral: null, project: 4 },
+          Math: { written: null, oral: null, project: 4 }
+        }
+      },
+      {
+        rollNo: 3,
+        name: "Shivansh kumar", // Matched with "Shivansh Kumar"
+        subjects: {
+          English: { written: 39, oral: 10, project: 5 },
+          Hindi: { written: 29, oral: 5, project: 5 },
+          Math: { written: 25, oral: 5, project: 5 }
+        }
+      },
+      {
+        rollNo: 4,
+        name: "Divyash kumar", // Matched with "Divyansh Kumar"
+        subjects: {
+          English: { written: 49, oral: 8, project: 7 },
+          Hindi: { written: 48, oral: 10, project: 7 },
+          Math: { written: 30, oral: null, project: 7 }
+        }
+      },
+      {
+        rollNo: 5,
+        name: "M.d Altaf", // Matched with "M.D Altaf"
+        subjects: {
+          English: { written: 39, oral: 5, project: 4 },
+          Hindi: { written: 40, oral: null, project: 4 },
+          Math: { written: 32, oral: 10, project: 4 }
+        }
+      },
+      {
+        rollNo: 6,
+        name: "M.d Mazid", // Matched with "M.D Mazid"
+        subjects: {
+          English: { written: 41, oral: 5, project: 4 },
+          Hindi: { written: 41, oral: 5, project: 4 },
+          Math: { written: 20, oral: 5, project: 4 }
+        }
+      },
+      {
+        rollNo: 7,
+        name: "M.d Shahanshah", // Matched with "M.D Shahanshah"
+        subjects: {
+          English: { written: 44, oral: 8, project: 4 },
+          Hindi: { written: 44, oral: 5, project: 4 },
+          Math: { written: 25, oral: null, project: 4 }
+        }
+      },
+      {
+        rollNo: 8,
+        name: "Kunal sah",
+        subjects: {
+          English: { written: 31, oral: 5, project: 4 },
+          Hindi: { written: null, oral: null, project: 4 },
+          Math: { written: 25, oral: 5, project: 4 }
+        }
+      },
+      {
+        rollNo: 9,
+        name: "Aditya kumar", // Matched with "Aditya Kumar"
+        subjects: {
+          English: { written: 48, oral: 10, project: 7 },
+          Hindi: { written: 43, oral: 8, project: 7 },
+          Math: { written: 35, oral: 5, project: 7 }
+        }
+      },
+      {
+        rollNo: 10,
+        name: "Khushahal Babu", // Matched with "Khushal babu"
+        subjects: {
+          English: { written: 31, oral: 8, project: 5 },
+          Hindi: { written: 37, oral: 5, project: 5 },
+          Math: { written: null, oral: null, project: 5 }
+        }
+      },
+      {
+        rollNo: 11,
+        name: "Gopal kumar", // Matched with "Gopal Kumar"
+        subjects: {
+          English: { written: 58, oral: 8, project: 7 },
+          Hindi: { written: 42, oral: 10, project: 7 },
+          Math: { written: null, oral: null, project: 7 }
+        }
+      },
+      {
+        rollNo: 12,
+        name: "Shanvi priya",
+        subjects: {
+          English: { written: null, oral: null, project: 4 },
+          Hindi: { written: 25, oral: 5, project: 4 },
+          Math: { written: 25, oral: 5, project: 4 }
+        }
+      },
+      {
+        rollNo: 13, // New student from marks list
+        name: "Shivesh Kumar",
+        subjects: {
+          English: { written: 39, oral: 10, project: null },
+          Hindi: { written: 29, oral: 5, project: null },
+          Math: { written: 25, oral: 5, project: null }
+        }
+      }
+    ]
+  },
+
+
+
+
   // --- U.K.G. DATA (Updated with Written & Oral Marks) ---
   {
     className: "UKG",
