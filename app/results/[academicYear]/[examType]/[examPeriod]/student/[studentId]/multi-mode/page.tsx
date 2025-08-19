@@ -123,7 +123,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       else grade = "E"
     }
 
-    const ogImageUrl = "/logo.png"
+    const ogImageUrl = "/OG-Image.png"
 
     return {
       title: `${student.name} - ${examTypeFormatted} ${examPeriodFormatted} ${academicYear} Results | DBG Gurukulam`,
