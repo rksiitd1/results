@@ -202,7 +202,7 @@ export default function StudentSearchPage({ params }: PageProps) {
 
     requestAnimationFrame(() => {
       const normalizedRoll = normalizeRollNumber(rollNumber)
-      const student = findStudent(selectedClass, normalizedRoll)
+      const student = findStudent(selectedClass, normalizedRoll, studentName)
 
       if (student && !isNameMatch(studentName, student.name)) {
         setNameError("No matching student found. Please check the details and try again.")

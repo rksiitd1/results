@@ -842,25 +842,27 @@ export function findStudent(className: string, rollNo: string, name: string): St
            normalizeName(s.name).includes(normalizedSearchName)
   )
   
-  // If not found and it's class 4, check in marks data with partial name match
-  if (!student && className === '4th') {
-    const class4Data = marksData.find(c => c.className === '4')
-    if (class4Data) {
-      const rollNum = parseInt(rollNo, 10)
-      const studentInMarks = class4Data.students.find(
-        s => s.rollNo === rollNum && normalizeName(s.name).includes(normalizedSearchName)
-      )
-      
-      if (studentInMarks) {
-        // Convert to StudentData format
-        return {
-          id: `dbg-4-${studentInMarks.rollNo.toString().padStart(3, '0')}`,
-          name: studentInMarks.name,
-          class: '4th',
-          rollNo: studentInMarks.rollNo.toString(),
-          fatherName: '', // These fields might not be available in marks data
-          motherName: '',
-          academicYear: ''
+  // If not found in main list, check marksData for the given class (supports all classes present there)
+  if (!student) {
+    const classNum = parseInt(className, 10) // handles ordinals like "1st", "4th"
+    if (!Number.isNaN(classNum)) {
+      const classData = marksData.find(c => c.className === String(classNum))
+      if (classData) {
+        const rollNum = parseInt(rollNo, 10)
+        const studentInMarks = classData.students.find(
+          s => s.rollNo === rollNum && normalizeName(s.name).includes(normalizedSearchName)
+        )
+        if (studentInMarks) {
+          // Convert to StudentData format
+          return {
+            id: `dbg-${classNum}-${studentInMarks.rollNo.toString().padStart(3, '0')}`,
+            name: studentInMarks.name,
+            class: className,
+            rollNo: studentInMarks.rollNo.toString().padStart(2, '0'),
+            fatherName: '', // Not available in marks data
+            motherName: '',
+            academicYear: ''
+          }
         }
       }
     }
