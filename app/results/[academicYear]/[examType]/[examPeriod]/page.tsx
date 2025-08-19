@@ -227,7 +227,10 @@ export default function StudentSearchPage({ params }: PageProps) {
   const classStats = selectedClass ? getClassStats(selectedClass) : null
 
   // class items built from original `classes` so findStudent receives expected values
-  const classItems = classes.map((cls) => ({ value: cls, label: `Class ${cls}` }))
+  const classItems = classes.map((cls) => ({
+    value: cls,
+    label: /^(\d+)(st|nd|rd|th)$/.test(cls) ? `Class ${cls}` : cls
+  }))
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
