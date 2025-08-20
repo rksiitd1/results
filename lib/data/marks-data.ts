@@ -666,9 +666,9 @@ export const marksData: ClassData[] = [
         rollNo: 1,
         name: "Amar Kumar",
         subjects: {
-          English: { written: 38, oral: 8, project: null },
+          English: { written: 38, oral: 8, project: 10 },
           Hindi: { written: 46, oral: 7, project: 9 },
-          Math: { written: 20, oral: 5, project: null },
+          Math: { written: 20, oral: 5, project: 10 },
           Science: { written: 22, oral: 7, project: 8 },
           SST: { written: 29, oral: 6, project: 8 }
         }
@@ -677,9 +677,9 @@ export const marksData: ClassData[] = [
         rollNo: 2,
         name: "Madhav Kumar",
         subjects: {
-          English: { written: 61, oral: 8, project: null },
+          English: { written: 61, oral: 8, project: 10 },
           Hindi: { written: 55, oral: 8, project: 5 },
-          Math: { written: 75, oral: 9, project: null },
+          Math: { written: 75, oral: 9, project: 10 },
           Science: { written: 48, oral: 7, project: 9 },
           SST: { written: 54, oral: 7, project: 8 }
         }
@@ -688,9 +688,9 @@ export const marksData: ClassData[] = [
         rollNo: 3,
         name: "Divyanshu Kumar",
         subjects: {
-          English: { written: 40, oral: 7, project: null },
+          English: { written: 40, oral: 7, project: 10 },
           Hindi: { written: 53, oral: 5, project: 0 },
-          Math: { written: 45, oral: 9, project: null },
+          Math: { written: 45, oral: 9, project: 10 },
           Science: { written: 30, oral: 0, project: 6 },
           SST: { written: 40, oral: 6, project: 0 }
         }
@@ -699,9 +699,9 @@ export const marksData: ClassData[] = [
         rollNo: 4,
         name: "Sonakshi Kumari",
         subjects: {
-          English: { written: 18, oral: 6, project: null },
+          English: { written: 18, oral: 6, project: 10 },
           Hindi: { written: 23, oral: 7, project: 0 },
-          Math: { written: 10, oral: 4, project: null },
+          Math: { written: 10, oral: 4, project: 10 },
           Science: { written: 23, oral: 5, project: 8 },
           SST: { written: 9, oral: 5, project: 0 }
         }
@@ -721,9 +721,9 @@ export const marksData: ClassData[] = [
         rollNo: 6,
         name: "Nayna Sen", // Matched with Nayna Kumari
         subjects: {
-          English: { written: 55, oral: 9, project: null },
+          English: { written: 55, oral: 9, project: 10 },
           Hindi: { written: 38, oral: 6, project: 10 },
-          Math: { written: 19, oral: 5, project: null },
+          Math: { written: 19, oral: 5, project: 10 },
           Science: { written: 33, oral: 9, project: 9 },
           SST: { written: 25, oral: 6, project: 10 }
         }
@@ -732,9 +732,9 @@ export const marksData: ClassData[] = [
         rollNo: 7,
         name: "Ranveer Kumar",
         subjects: {
-          English: { written: 27, oral: 7, project: null },
+          English: { written: 27, oral: 7, project: 10 },
           Hindi: { written: 41, oral: 7, project: 7 },
-          Math: { written: 32, oral: 6, project: null },
+          Math: { written: 32, oral: 6, project: 10 },
           Science: { written: 23, oral: 9, project: 8 },
           SST: { written: 25, oral: 5, project: 10 }
         }
@@ -743,9 +743,9 @@ export const marksData: ClassData[] = [
         rollNo: 8,
         name: "Harshvardhan Kumar",
         subjects: {
-          English: { written: 9, oral: 3, project: null },
+          English: { written: 9, oral: 3, project: 10 },
           Hindi: { written: 21, oral: 8, project: 0 },
-          Math: { written: 12, oral: 4, project: null },
+          Math: { written: 12, oral: 4, project: 10 },
           Science: { written: 19, oral: 5, project: 0 },
           SST: { written: 11, oral: 6, project: 0 }
         }
@@ -754,9 +754,9 @@ export const marksData: ClassData[] = [
         rollNo: 9,
         name: "Ayush Kumar",
         subjects: {
-          English: { written: 31, oral: 8, project: null },
+          English: { written: 31, oral: 8, project: 10 },
           Hindi: { written: 40, oral: 6, project: 7 },
-          Math: { written: 21, oral: 3, project: null },
+          Math: { written: 21, oral: 3, project: 10 },
           Science: { written: 13, oral: 5, project: 10 },
           SST: { written: 31, oral: 7, project: 9 }
         }
@@ -765,9 +765,9 @@ export const marksData: ClassData[] = [
         rollNo: 10,
         name: "Ritik Anand", // Matched with Ritik Kumar
         subjects: {
-          English: { written: 66, oral: 9, project: null },
+          English: { written: 66, oral: 9, project: 10 },
           Hindi: { written: 45, oral: 9, project: 6 },
-          Math: { written: 51, oral: 9, project: null },
+          Math: { written: 51, oral: 9, project: 10 },
           Science: { written: 43, oral: 9, project: 4 },
           SST: { written: 35, oral: 8, project: 7 }
         }
@@ -776,9 +776,9 @@ export const marksData: ClassData[] = [
         rollNo: 11,
         name: "Roopak Kumar",
         subjects: {
-          English: { written: 26, oral: 6, project: null },
+          English: { written: 26, oral: 6, project: 10 },
           Hindi: { written: 26, oral: 6, project: 0 },
-          Math: { written: 14, oral: 6, project: null },
+          Math: { written: 14, oral: 6, project: 10 },
           Science: { written: 15, oral: 4, project: 2 },
           SST: { written: 11, oral: 5, project: 0 }
         }
